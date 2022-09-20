@@ -29,13 +29,14 @@ namespace Quizleter
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
             }).AddEntityFrameworkStores<AuthContext>();
 
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.HttpOnly = true;
-
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 options.LoginPath = "/User/Login";
                 options.LogoutPath = "/User/Logout";
                 options.AccessDeniedPath = "/Home/AccessDenied";
