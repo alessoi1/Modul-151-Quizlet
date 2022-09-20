@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Quizleter.Data;
-using Microsoft.AspNetCore.Identity;
+using Quizleter.Services.Learnsets;
+using Quizleter.Services.Learnsets.Impl;
+using System;
 
 namespace Quizleter
 {
@@ -42,6 +40,8 @@ namespace Quizleter
                 options.AccessDeniedPath = "/Home/AccessDenied";
                 options.SlidingExpiration = true;
             });
+
+            services.AddTransient<ILearnsetService, LearnsetService>();
 
             services.AddControllersWithViews();
 
