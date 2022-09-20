@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Quizleter.Data;
+using Quizleter.Models;
 using Quizleter.ViewModels;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Quizleter.Controllers
@@ -75,6 +77,19 @@ namespace Quizleter.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Details()
+        {
+            if (_signInManager.IsSignedIn(User))
+            {
+                return View(new UserDetailsViewModel
+                {
+                    Email = User.Identity.Name,
+                    Learnsets = new List<Learnset>()
+                });
+            }
+            return Login();
         }
     }
 }
