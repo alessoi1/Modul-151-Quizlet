@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Quizleter.Data;
 using Quizleter.Models;
+using Quizleter.Services.Learnsets;
 using Quizleter.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,17 +14,37 @@ namespace Quizleter.Controllers
         private readonly AuthContext _context;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ILearnsetService _learnsetService;
 
-        public UsersController(AuthContext context, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+        public UsersController(
+            AuthContext context,
+            SignInManager<IdentityUser>
+            signInManager,
+            UserManager<IdentityUser> userManager,
+            ILearnsetService learnsetService)
         {
             _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
+            _learnsetService = learnsetService;
         }
 
         public IActionResult Register()
         {
             return View();
+        }
+
+        public IActionResult Details()
+        {
+            if (_signInManager.IsSignedIn(User))
+            {
+                return View(new UserDetailsViewModel
+                {
+                    Email = User.Identity.Name,
+                    Learnsets = _learnsetService.GetLearnsetsByUser(User.Identity.Name)
+                });
+            }
+            return Login();
         }
 
         [HttpPost]
@@ -77,19 +98,6 @@ namespace Quizleter.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
-        }
-
-        public IActionResult Details()
-        {
-            if (_signInManager.IsSignedIn(User))
-            {
-                return View(new UserDetailsViewModel
-                {
-                    Email = User.Identity.Name,
-                    Learnsets = new List<Learnset>()
-                });
-            }
-            return Login();
         }
     }
 }
