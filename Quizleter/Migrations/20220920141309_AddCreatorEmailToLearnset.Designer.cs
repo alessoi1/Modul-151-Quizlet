@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Quizleter.Data;
 
 namespace Quizleter.Migrations
 {
     [DbContext(typeof(QuizleterContext))]
-    partial class QuizleterContextModelSnapshot : ModelSnapshot
+    [Migration("20220920141309_AddCreatorEmailToLearnset")]
+    partial class AddCreatorEmailToLearnset
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
