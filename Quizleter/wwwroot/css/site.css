@@ -86,5 +86,12 @@ body {
     border: none;
 }
 
-/* General styles
+/* Form styles
 -------------------------------------------------- */
+.form-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    margin: 10px;
+}

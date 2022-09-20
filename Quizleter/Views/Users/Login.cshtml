@@ -10,16 +10,15 @@
         <section>
             <form asp-action="Login" id="account" method="post">
                 <h1>@ViewData["Title"]</h1>
+                <img src="~/img/logo-wide-transparent.png" class="form-image" />
                 <hr />
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
-                    <label asp-for="Email"></label>
-                    <input asp-for="Email" class="form-control" />
+                    <input asp-for="Email" placeholder="E-Mail" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Password"></label>
-                    <input asp-for="Password" class="form-control" />
+                    <input asp-for="Password" placeholder="Password" class="form-control" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -32,6 +31,9 @@
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary w-100">Login</button>
+                </div>
+                <div class="form-group">
+                    <a asp-action="Register" class="btn btn-secondary w-100">New to Quizleter? Create an account</a>
                 </div>
             </form>
         </section>
