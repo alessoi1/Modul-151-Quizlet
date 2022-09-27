@@ -1,36 +1,67 @@
-﻿@model Quizleter.Models.Learnset
+﻿@using Quizleter.ViewModels
+@model CreateLearnsetViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Learnset";
 }
 
-<h1>Create</h1>
-
-<h4>Learnset</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <h1>Create a Learnset</h1>
+        <hr />
+        <form asp-action="CreatePost">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="Vocabulary" hidden />
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <input asp-for="Title" placeholder="Name of your learnset" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Desc" class="control-label"></label>
-                <input asp-for="Desc" class="form-control" />
-                <span asp-validation-for="Desc" class="text-danger"></span>
+                <input asp-for="Description" placeholder="Describe your learnset" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <input asp-for="NewDefinition" placeholder="Definition" class="form-control" />
+                        <span asp-validation-for="NewDefinition" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-5">
+                        <input asp-for="NewTerm" placeholder="Term" class="form-control" />
+                        <span asp-validation-for="NewTerm" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-1">
+                        <input type="submit" formmethod="get" value="+" asp-action="Create" class="btn btn-secondary w-100" />
+                    </div>
+                </div>
+            </div>
+            @foreach (var item in Model.Vocabulary)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input value="@item.Definition" class="form-control" disabled />
+                        </div>
+                        <div class="col-md-6">
+                            <input value="@item.Term" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6">
+                        <a asp-action="Index" class="btn btn-secondary w-100">Cancel</a>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="submit" value="Create" class="btn btn-primary w-100" />
+                    </div>
+                </div>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+    <div class="col-md-2"></div>
 </div>
 
 @section Scripts {
