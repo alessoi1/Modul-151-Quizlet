@@ -8,5 +8,7 @@ namespace Quizleter.ViewModels
         public string Title { get; set; }
         public string Description { get; set; }
         public IEnumerable<Vocab> Vocabulary { get; set; }
+        public string NewDefinition { get; set; }
+        public string NewTerm { get; set; }
     }
 }

@@ -35,8 +35,8 @@ namespace Quizleter
             {
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromDays(7);
-                options.LoginPath = "/User/Login";
-                options.LogoutPath = "/User/Logout";
+                options.LoginPath = "/Users/Login";
+                options.LogoutPath = "/Users/Logout";
                 options.AccessDeniedPath = "/Home/AccessDenied";
                 options.SlidingExpiration = true;
             });
@@ -44,6 +44,15 @@ namespace Quizleter
             services.AddTransient<ILearnsetService, LearnsetService>();
 
             services.AddControllersWithViews();
+
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(1);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
             services.AddDbContext<QuizleterContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("QuizleterContext")));
@@ -71,6 +80,8 @@ namespace Quizleter
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

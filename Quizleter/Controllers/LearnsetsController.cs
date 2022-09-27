@@ -3,12 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Quizleter.Data;
 using Quizleter.Models;
+using Quizleter.ViewModels;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Quizleter.Controllers
 {
-    [Authorize]
     public class LearnsetsController : Controller
     {
         private readonly QuizleterContext _context;
@@ -43,25 +47,72 @@ namespace Quizleter.Controllers
         }
 
         // GET: Learnsets/Create
-        public IActionResult Create()
+        [Authorize]
+        [HttpGet]
+        public IActionResult Create(CreateLearnsetViewModel viewModel)
         {
-            return View();
+            if (viewModel.Vocabulary == null)
+            {
+                HttpContext.Session.Clear();
+                return View(new CreateLearnsetViewModel
+                {
+                    Vocabulary = new List<Vocab>()
+                });
+            }
+
+            var vocabulary = new List<Vocab>();
+
+            if (HttpContext.Session.Keys.Contains("vocabulary"))
+            {
+                HttpContext.Session.TryGetValue("vocabulary", out byte[] vocabsBytes);
+                vocabulary = JsonSerializer.Deserialize<List<Vocab>>(vocabsBytes);
+            }
+
+            vocabulary.Add(new Vocab
+            {
+                Definition = viewModel.NewDefinition,
+                Term = viewModel.NewTerm
+            });
+            viewModel.Vocabulary = vocabulary;
+
+            var newVocabsBytes = JsonSerializer.SerializeToUtf8Bytes(vocabulary);
+            HttpContext.Session.Set("vocabulary", newVocabsBytes);
+
+            return View(viewModel);
         }
 
         // POST: Learnsets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Desc")] Learnset learnset)
+        public async Task<IActionResult> CreatePost([Bind("Title,Description")] CreateLearnsetViewModel viewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(learnset);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(viewModel);
             }
-            return View(learnset);
+
+            var learnset = new Learnset
+            {
+                Name = viewModel.Title,
+                Desc = viewModel.Description,
+                CreatorEmail = User.Identity.Name
+            };
+
+            HttpContext.Session.TryGetValue("vocabulary", out byte[] vocabBytes);
+            var vocabulary = JsonSerializer.Deserialize<List<Vocab>>(vocabBytes);
+            foreach (var vocab in vocabulary)
+            {
+                vocab.Learnset = learnset;
+            }
+
+            _context.Learnset.Add(learnset);
+            _context.Vocab.AddRange(vocabulary);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Learnsets/Edit/5
