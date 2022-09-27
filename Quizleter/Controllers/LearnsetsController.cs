@@ -68,54 +68,35 @@ namespace Quizleter.Controllers
         }
 
         // GET: Learnsets/Edit/5
-        public async Task<IActionResult> Edit(long? id)
+        public async Task<IActionResult> Learn(long? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var learnset = await _context.Learnset.FindAsync(id);
-            if (learnset == null)
+            var vocabsOfLearnsets = _context.Vocab.Where(v => v.LearnsetId == id);
+            if (vocabsOfLearnsets == null)
             {
                 return NotFound();
             }
-            return View(learnset);
+            return View(vocabsOfLearnsets);
         }
 
-        // POST: Learnsets/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Name,Desc")] Learnset learnset)
+        // GET: Learnsets/Edit/5
+        public async Task<IActionResult> Test(long? id)
         {
-            if (id != learnset.Id)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var vocabsOfLearnsets = _context.Vocab.Where(v => v.LearnsetId == id);
+            if (vocabsOfLearnsets == null)
             {
-                try
-                {
-                    _context.Update(learnset);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LearnsetExists(learnset.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View(learnset);
+            return View(vocabsOfLearnsets);
         }
 
         // GET: Learnsets/Delete/5
