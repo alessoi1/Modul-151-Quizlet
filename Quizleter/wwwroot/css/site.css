@@ -155,3 +155,7 @@ body {
     transform: rotateY(180deg);
     text-align: center;
 }
+
+.card {
+    margin-bottom: 20px;
+}
