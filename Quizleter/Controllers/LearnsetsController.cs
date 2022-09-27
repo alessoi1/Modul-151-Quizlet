@@ -48,7 +48,7 @@ namespace Quizleter.Controllers
 
             result.OtherLearnsets = (await _learnsetService
                 .GetAllLearnsetsAsync())
-                .Where(l => !l.CreatorEmail.Equals(User.Identity.Name))
+                .Where(l => !l.CreatorUsername.Equals(User.Identity.Name))
                 .ToList();
 
 
@@ -128,7 +128,7 @@ namespace Quizleter.Controllers
             {
                 Name = viewModel.Title,
                 Desc = viewModel.Description,
-                CreatorEmail = User.Identity.Name
+                CreatorUsername = User.Identity.Name
             };
 
             HttpContext.Session.TryGetValue("vocabulary", out byte[] vocabBytes);

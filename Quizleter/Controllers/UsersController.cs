@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Quizleter.Data;
 using Quizleter.Services.Learnsets;
 using Quizleter.ViewModels;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Quizleter.Controllers
@@ -35,7 +36,8 @@ namespace Quizleter.Controllers
             {
                 return View(new UserDetailsViewModel
                 {
-                    Email = User.Identity.Name,
+                    Username = User.Identity.Name,
+                    Email = User.FindFirst(ClaimTypes.Email).Value,
                     Learnsets = await _learnsetService.GetLearnsetsByUserAsync(User.Identity.Name)
                 });
             }
@@ -47,7 +49,7 @@ namespace Quizleter.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = viewModel.Email, Email = viewModel.Email };
+                var user = new IdentityUser { UserName = viewModel.Username, Email = viewModel.Email };
                 var result = await _userManager.CreateAsync(user, viewModel.Password);
                 if (result.Succeeded)
                 {
@@ -73,7 +75,7 @@ namespace Quizleter.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(viewModel.Email, viewModel.Password, viewModel.RememberMe, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(viewModel.Username, viewModel.Password, viewModel.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index", "Home");

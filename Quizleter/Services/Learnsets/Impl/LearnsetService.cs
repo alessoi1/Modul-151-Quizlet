@@ -21,9 +21,9 @@ namespace Quizleter.Services.Learnsets.Impl
             return await _context.Learnset.ToListAsync();
         }
 
-        public async Task<IEnumerable<Learnset>> GetLearnsetsByUserAsync(string email)
+        public async Task<IEnumerable<Learnset>> GetLearnsetsByUserAsync(string username)
         {
-            return await _context.Learnset.Where(l => l.CreatorEmail.Equals(email)).ToListAsync();
+            return await _context.Learnset.Where(l => l.CreatorUsername.Equals(username)).ToListAsync();
         }
     }
 }

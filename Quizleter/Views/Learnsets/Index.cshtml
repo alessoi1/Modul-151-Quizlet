@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
                     <p class="card-text">@Html.DisplayFor(modelItem => item.Desc)</p>
-                    <p class="card-text">@Html.DisplayFor(modelItem => item.CreatorEmail)</p>
+                    <p class="card-text">&#64;@Html.DisplayFor(modelItem => item.CreatorUsername)</p>
                     <a asp-action="Learn" asp-route-id="@item.Id" class="btn btn-primary w-100">Learn</a>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                 <div class="card-body">
                     <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
                     <p class="card-text">@Html.DisplayFor(modelItem => item.Desc)</p>
-                    <p class="card-text">@Html.DisplayFor(modelItem => item.CreatorEmail)</p>
+                    <p class="card-text">&#64;@Html.DisplayFor(modelItem => item.CreatorUsername)</p>
                     <a asp-action="Learn" asp-route-id="@item.Id" class="btn btn-primary w-100">Learn</a>
                 </div>
             </div>
