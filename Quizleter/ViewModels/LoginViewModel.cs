@@ -5,7 +5,6 @@ namespace Quizleter.ViewModels
     public class LoginViewModel
     {
         [Required]
-        [EmailAddress]
         public string Username { get; set; }
 
         [Required]
