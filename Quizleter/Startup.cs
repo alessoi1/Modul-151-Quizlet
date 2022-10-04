@@ -1,13 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quizleter.Data;
+using Quizleter.Services.Learnsets;
+using Quizleter.Services.Learnsets.Impl;
+using System;
 
 namespace Quizleter
 {
@@ -23,7 +24,41 @@ namespace Quizleter
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+            }).AddEntityFrameworkStores<AuthContext>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                options.LoginPath = "/Users/Login";
+                options.LogoutPath = "/Users/Logout";
+                options.AccessDeniedPath = "/Home/AccessDenied";
+                options.SlidingExpiration = true;
+            });
+
+            services.AddTransient<ILearnsetService, LearnsetService>();
+
             services.AddControllersWithViews();
+
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(1);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            services.AddDbContext<QuizleterContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("QuizleterContext")));
+
+            services.AddDbContext<AuthContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("AuthContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,8 +78,10 @@ namespace Quizleter
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

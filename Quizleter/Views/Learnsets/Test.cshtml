@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Quizleter.Models.Vocab>
+@{
+    ViewData["Title"] = "Test";
+}
+
+<h1>Schreiben</h1>
+<hr />
+
+<div class="container">
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <p>Wähle welche Wörter du lernen möchtest:</p>
+        </div>
+        <div class="col-4"></div>
+    </div>
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <button class="btn btn-primary" asp-action="TestDefinitionOrTerm" asp-controller="Learnsets" asp-route-definition="true"
+                    asp- type="radio" name="language" value="Definition">Definition</button>
+            <button type="radio" class="btn btn-primary" name="language" value="Begriff">Begriff</button>
+        </div>
+        <div class="col-4"></div>
+    </div>
+</div>
+
+@if (true)
+{
+
+}

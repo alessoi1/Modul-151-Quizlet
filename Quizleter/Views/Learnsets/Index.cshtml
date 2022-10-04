@@ -1,0 +1,51 @@
+﻿@model Quizleter.ViewModels.LearnsetsViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Deine Lernsets</h1>
+<div class="row">
+    @foreach (var item in Model.OwnedLearnsets)
+    {
+        <div class="col-md-4">
+            <div class="card">
+                <img class="card-img-top" src="/img/logo-full.png" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                    <p class="card-text">@Html.DisplayFor(modelItem => item.Desc)</p>
+                    <p class="card-text">&#64;@Html.DisplayFor(modelItem => item.CreatorUsername)</p>
+                    <a asp-action="Learn" asp-route-id="@item.Id" class="btn btn-primary w-100">Learn</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.OwnedLearnsets.Count == 0)
+{
+    <p>Du hast noch keine Lernsets.</p>
+}
+
+<br />
+<a asp-action="Create" class="btn btn-primary w-100">Lernset erstellen</a>
+<br />
+<br />
+
+<h1>Andere Lernsets</h1>
+<div class="row">
+    @foreach (var item in Model.OtherLearnsets)
+    {
+        <div class="col-md-4">
+            <div class="card">
+                <img class="card-img-top" src="/img/logo-full.png" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                    <p class="card-text">@Html.DisplayFor(modelItem => item.Desc)</p>
+                    <p class="card-text">&#64;@Html.DisplayFor(modelItem => item.CreatorUsername)</p>
+                    <a asp-action="Learn" asp-route-id="@item.Id" class="btn btn-primary w-100">Learn</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

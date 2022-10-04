@@ -7,6 +7,15 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+.navbar-brand img {
+    height: 50px;
+}
+
+.nav-item .btn {
+    padding: 10px 20px;
+    margin: 10px;
+}
+
 /* Provide sufficient contrast against white background */
 a {
   color: #0366d6;
@@ -68,4 +77,85 @@ body {
   width: 100%;
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
+}
+
+/* Button styles
+-------------------------------------------------- */
+.btn-primary {
+    background-color: #0076ff;
+    border: none;
+}
+
+.btn-secondary {
+    color: #000;
+    background-color: #FFF;
+    border: 1px solid #000;
+}
+
+.btn-secondary:hover {
+    color: #000;
+    background-color: #EEE;
+    border: 1px solid #000;
+}
+
+/* Form styles
+-------------------------------------------------- */
+.form-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    margin: 10px;
+}
+
+.flip-card {
+    background-color: transparent;
+    width: 300px;
+    height: 300px;
+    perspective: 1000px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border: solid black 2px;
+    border-radius: 20px;
+}
+
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.flip-card-front {
+    background-color: white;
+    color: black;
+    text-align: center;
+}
+
+.flip-card-back {
+    background-color: white;
+    color: black;
+    transform: rotateY(180deg);
+    text-align: center;
+}
+
+.card {
+    margin-bottom: 20px;
 }

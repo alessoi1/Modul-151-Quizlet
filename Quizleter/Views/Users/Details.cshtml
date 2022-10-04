@@ -1,0 +1,43 @@
+﻿@model Quizleter.ViewModels.UserDetailsViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Dein Account</h1>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Username)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Username)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+    </dl>
+
+    <hr />
+    <h4>Deine Lernsets</h4>
+    <div class="row">
+        @foreach (var learnset in Model.Learnsets)
+        {
+            <div class="col-md-4">
+                <div class="card">
+                    <img class="card-img-top" src="/img/logo-full.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title">@Html.DisplayFor(modelItem => learnset.Name)</h5>
+                        <p class="card-text">@Html.DisplayFor(modelItem => learnset.Desc)</p>
+                        <p class="card-text">&#64;@Html.DisplayFor(modelItem => learnset.CreatorUsername)</p>
+                        <a asp-action="Learn" asp-route-id="@learnset.Id" class="btn btn-primary w-100">Learn</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
