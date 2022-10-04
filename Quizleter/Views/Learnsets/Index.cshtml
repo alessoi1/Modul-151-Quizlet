@@ -4,7 +4,16 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Deine Lernsets</h1>
+<div class="row">
+    <div class="col-md-9">
+        <h1>Deine Lernsets</h1>
+    </div>
+    <div class="col-md-3" title="Create a learnset">
+        <a asp-action="Create" class="btn btn-lg btn-primary float-right"><i class="fa-solid fa-plus"></i></a>
+    </div>
+</div>
+<hr />
+
 <div class="row">
     @foreach (var item in Model.OwnedLearnsets)
     {
@@ -32,12 +41,9 @@
     <p>Du hast noch keine Lernsets.</p>
 }
 
-<br />
-<a asp-action="Create" class="btn btn-primary w-100">Lernset erstellen</a>
-<br />
-<br />
-
 <h1>Andere Lernsets</h1>
+<hr />
+
 <div class="row">
     @foreach (var item in Model.OtherLearnsets)
     {

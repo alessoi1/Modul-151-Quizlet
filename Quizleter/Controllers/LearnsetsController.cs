@@ -87,6 +87,19 @@ namespace Quizleter.Controllers
                 });
             }
 
+            if (string.IsNullOrWhiteSpace(viewModel.NewDefinition))
+            {
+                ModelState.AddModelError(nameof(viewModel.NewDefinition), "The definition can't empty.");
+            }
+            if (string.IsNullOrWhiteSpace(viewModel.NewTerm))
+            {
+                ModelState.AddModelError(nameof(viewModel.NewTerm), "The term can't empty.");
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                return View(viewModel);
+            }
+
             var vocabulary = new List<Vocab>();
 
             if (HttpContext.Session.Keys.Contains("vocabulary"))
@@ -119,9 +132,21 @@ namespace Quizleter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePost([Bind("Title,Description")] CreateLearnsetViewModel viewModel)
         {
-            if (!ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(viewModel.Title))
             {
-                return View(viewModel);
+                ModelState.AddModelError(nameof(viewModel.Title), "The title can't be empty.");
+            }
+            if (string.IsNullOrWhiteSpace(viewModel.Description))
+            {
+                ModelState.AddModelError(nameof(viewModel.Description), "The description can't be empty.");
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                if (viewModel.Vocabulary == null)
+                {
+                    viewModel.Vocabulary = new List<Vocab>();
+                }
+                return View(nameof(Create), viewModel);
             }
 
             var learnset = new Learnset
@@ -133,6 +158,13 @@ namespace Quizleter.Controllers
 
             HttpContext.Session.TryGetValue("vocabulary", out byte[] vocabBytes);
             var vocabulary = JsonSerializer.Deserialize<List<Vocab>>(vocabBytes);
+
+            if (!vocabulary.Any())
+            {
+                ModelState.AddModelError(nameof(viewModel.Vocabulary), "There's no vocabulary in your learnset.");
+                return View(nameof(Create), viewModel);
+            }
+
             foreach (var vocab in vocabulary)
             {
                 vocab.Learnset = learnset;
