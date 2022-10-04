@@ -146,6 +146,54 @@ namespace Quizleter.Controllers
         }
 
         // GET: Learnsets/Edit/5
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Edit(long? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var learnset = await _context.Learnset.FindAsync(id);
+            var username = User.Identity.Name;
+
+            if (!learnset.CreatorUsername.Equals(username))
+            {
+                return NotFound();
+            }
+
+            var result = new EditLearnsetViewModel
+            {
+                Id = learnset.Id,
+                Name = learnset.Name,
+                Desc = learnset.Desc
+            };
+
+            return View(result);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditLearnsetViewModel viewModel)
+        {
+            var learnset = await _context.Learnset.FindAsync(viewModel.Id);
+            var username = User.Identity.Name;
+            if (learnset == null || !learnset.CreatorUsername.Equals(username))
+            {
+                return NotFound();
+            }
+
+            learnset.Name = viewModel.Name;
+            learnset.Desc = viewModel.Desc;
+
+            _context.Learnset.Update(learnset);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Learnsets/Learn/5
         public async Task<IActionResult> Learn(long? id)
         {
             if (id == null)
@@ -161,7 +209,7 @@ namespace Quizleter.Controllers
             return View(vocabsOfLearnsets);
         }
 
-        // GET: Learnsets/Edit/5
+        // GET: Learnsets/Test/5
         public async Task<IActionResult> Test(long? id)
         {
             if (id == null)
