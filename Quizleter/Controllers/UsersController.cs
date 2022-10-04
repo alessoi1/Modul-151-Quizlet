@@ -1,29 +1,25 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Quizleter.Data;
-using Quizleter.Models;
 using Quizleter.Services.Learnsets;
 using Quizleter.ViewModels;
-using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Quizleter.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly AuthContext _context;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILearnsetService _learnsetService;
 
         public UsersController(
-            AuthContext context,
             SignInManager<IdentityUser>
             signInManager,
             UserManager<IdentityUser> userManager,
             ILearnsetService learnsetService)
         {
-            _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
             _learnsetService = learnsetService;
@@ -34,14 +30,15 @@ namespace Quizleter.Controllers
             return View();
         }
 
-        public IActionResult Details()
+        public async Task<IActionResult> Details()
         {
             if (_signInManager.IsSignedIn(User))
             {
                 return View(new UserDetailsViewModel
                 {
-                    Email = User.Identity.Name,
-                    Learnsets = _learnsetService.GetLearnsetsByUser(User.Identity.Name)
+                    Username = User.Identity.Name,
+                    Email = User.FindFirst(ClaimTypes.Email).Value,
+                    Learnsets = await _learnsetService.GetLearnsetsByUserAsync(User.Identity.Name)
                 });
             }
             return Login();
@@ -52,7 +49,7 @@ namespace Quizleter.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = viewModel.Email, Email = viewModel.Email };
+                var user = new IdentityUser { UserName = viewModel.Username, Email = viewModel.Email };
                 var result = await _userManager.CreateAsync(user, viewModel.Password);
                 if (result.Succeeded)
                 {
@@ -78,7 +75,7 @@ namespace Quizleter.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(viewModel.Email, viewModel.Password, viewModel.RememberMe, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(viewModel.Username, viewModel.Password, viewModel.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index", "Home");

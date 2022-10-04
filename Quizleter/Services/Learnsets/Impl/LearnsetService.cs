@@ -1,7 +1,9 @@
-﻿using Quizleter.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Quizleter.Data;
 using Quizleter.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Quizleter.Services.Learnsets.Impl
 {
@@ -14,9 +16,14 @@ namespace Quizleter.Services.Learnsets.Impl
             _context = context;
         }
 
-        public IEnumerable<Learnset> GetLearnsetsByUser(string email)
+        public async Task<IEnumerable<Learnset>> GetAllLearnsetsAsync()
         {
-            return _context.Learnset.Where(l => l.CreatorEmail.Equals(email));
+            return await _context.Learnset.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Learnset>> GetLearnsetsByUserAsync(string username)
+        {
+            return await _context.Learnset.Where(l => l.CreatorUsername.Equals(username)).ToListAsync();
         }
     }
 }

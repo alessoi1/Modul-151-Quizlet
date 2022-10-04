@@ -8,6 +8,6 @@
 
         public string Desc { get; set; }
 
-        public string CreatorEmail { get; set; }
+        public string CreatorUsername { get; set; }
     }
 }

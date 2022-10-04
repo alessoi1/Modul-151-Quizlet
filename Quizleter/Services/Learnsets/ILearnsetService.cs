@@ -1,10 +1,12 @@
 ﻿using Quizleter.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Quizleter.Services.Learnsets
 {
     public interface ILearnsetService
     {
-        IEnumerable<Learnset> GetLearnsetsByUser(string email);
+        Task<IEnumerable<Learnset>> GetAllLearnsetsAsync();
+        Task<IEnumerable<Learnset>> GetLearnsetsByUserAsync(string email);
     }
 }

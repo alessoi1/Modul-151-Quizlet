@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Quizleter.Data;
 using Quizleter.Models;
+using Quizleter.Services.Learnsets;
 using Quizleter.ViewModels;
 using System.Collections.Generic;
 using System.IO;
@@ -16,16 +18,41 @@ namespace Quizleter.Controllers
     public class LearnsetsController : Controller
     {
         private readonly QuizleterContext _context;
+        private readonly ILearnsetService _learnsetService;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public LearnsetsController(QuizleterContext context)
+        public LearnsetsController(QuizleterContext context, ILearnsetService learnsetService, SignInManager<IdentityUser> signInManager)
         {
             _context = context;
+            _learnsetService = learnsetService;
+            _signInManager = signInManager;
         }
 
         // GET: Learnsets
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Learnset.ToListAsync());
+            var result = new LearnsetsViewModel();
+
+            if (!_signInManager.IsSignedIn(User))
+            {
+                result.OtherLearnsets = (await _learnsetService
+                    .GetAllLearnsetsAsync())
+                    .ToList();
+
+                return View(result);
+            }
+
+            result.OwnedLearnsets = (await _learnsetService
+                .GetLearnsetsByUserAsync(User.Identity.Name))
+                .ToList();
+
+            result.OtherLearnsets = (await _learnsetService
+                .GetAllLearnsetsAsync())
+                .Where(l => !l.CreatorUsername.Equals(User.Identity.Name))
+                .ToList();
+
+
+            return View(result);
         }
 
         // GET: Learnsets/Details/5
@@ -78,6 +105,9 @@ namespace Quizleter.Controllers
             var newVocabsBytes = JsonSerializer.SerializeToUtf8Bytes(vocabulary);
             HttpContext.Session.Set("vocabulary", newVocabsBytes);
 
+            viewModel.NewDefinition = string.Empty;
+            viewModel.NewTerm = string.Empty;
+
             return View(viewModel);
         }
 
@@ -98,7 +128,7 @@ namespace Quizleter.Controllers
             {
                 Name = viewModel.Title,
                 Desc = viewModel.Description,
-                CreatorEmail = User.Identity.Name
+                CreatorUsername = User.Identity.Name
             };
 
             HttpContext.Session.TryGetValue("vocabulary", out byte[] vocabBytes);

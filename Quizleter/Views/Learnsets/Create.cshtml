@@ -24,11 +24,11 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-6">
-                        <input asp-for="NewDefinition" placeholder="Definition" class="form-control" />
+                        <input asp-for="NewDefinition" placeholder="Definition" value="@Model.NewDefinition" class="form-control" />
                         <span asp-validation-for="NewDefinition" class="text-danger"></span>
                     </div>
                     <div class="col-md-5">
-                        <input asp-for="NewTerm" placeholder="Term" class="form-control" />
+                        <input asp-for="NewTerm" placeholder="Term" value="@Model.NewTerm" class="form-control" />
                         <span asp-validation-for="NewTerm" class="text-danger"></span>
                     </div>
                     <div class="col-md-1">
