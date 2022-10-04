@@ -7,9 +7,7 @@ using Quizleter.Models;
 using Quizleter.Services.Learnsets;
 using Quizleter.ViewModels;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -159,6 +157,12 @@ namespace Quizleter.Controllers
                 return NotFound();
             }
             return View(vocabsOfLearnsets);
+        }
+
+        // GET: Learnsets/Edit/5
+        public async Task<IActionResult> TestDefinitionOrTerm(bool definition)
+        {
+            return View();
         }
 
         // GET: Learnsets/Edit/5

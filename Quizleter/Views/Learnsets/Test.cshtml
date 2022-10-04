@@ -10,17 +10,16 @@
     <div class="row">
         <div class="col-4"></div>
         <div class="col-4">
-            <p>Wähle welches Wörter du lernen möchtest:</p>
+            <p>Wähle welche Wörter du lernen möchtest:</p>
         </div>
         <div class="col-4"></div>
     </div>
     <div class="row">
         <div class="col-4"></div>
         <div class="col-4">
-            <input class="btn" type="radio" name="language" value="Definition">
-            <label class="btn" style="margin-left: 2px">Definition</label>
-            <input type="radio" class="btn" name="language" value="Begriff">
-            <label class="btn" style="margin-left: 2px">Begriff</label>
+            <button class="btn btn-primary" asp-action="TestDefinitionOrTerm" asp-controller="Learnsets" asp-route-definition="true"
+                    asp- type="radio" name="language" value="Definition">Definition</button>
+            <button type="radio" class="btn btn-primary" name="language" value="Begriff">Begriff</button>
         </div>
         <div class="col-4"></div>
     </div>
