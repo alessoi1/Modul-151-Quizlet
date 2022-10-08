@@ -5,11 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using Quizleter.Data;
 using Quizleter.Models;
 using Quizleter.Services.Learnsets;
+using Quizleter.Services.Session;
 using Quizleter.ViewModels;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -19,12 +18,18 @@ namespace Quizleter.Controllers
     {
         private readonly QuizleterContext _context;
         private readonly ILearnsetService _learnsetService;
+        private readonly ISessionService _sessionService;
         private readonly SignInManager<IdentityUser> _signInManager;
 
-        public LearnsetsController(QuizleterContext context, ILearnsetService learnsetService, SignInManager<IdentityUser> signInManager)
+        public LearnsetsController(
+            QuizleterContext context,
+            ILearnsetService learnsetService, 
+            ISessionService sessionService, 
+            SignInManager<IdentityUser> signInManager)
         {
             _context = context;
             _learnsetService = learnsetService;
+            _sessionService = sessionService;
             _signInManager = signInManager;
         }
 
@@ -80,7 +85,7 @@ namespace Quizleter.Controllers
         {
             if (viewModel.Vocabulary == null)
             {
-                HttpContext.Session.Clear();
+                _sessionService.ClearSession();
                 return View(new CreateLearnsetViewModel
                 {
                     Vocabulary = new List<Vocab>()
@@ -102,10 +107,9 @@ namespace Quizleter.Controllers
 
             var vocabulary = new List<Vocab>();
 
-            if (HttpContext.Session.Keys.Contains("vocabulary"))
+            if (_sessionService.KeyExists("vocabulary"))
             {
-                HttpContext.Session.TryGetValue("vocabulary", out byte[] vocabsBytes);
-                vocabulary = JsonSerializer.Deserialize<List<Vocab>>(vocabsBytes);
+                vocabulary = _sessionService.GetValue<List<Vocab>>("vocabulary");
             }
 
             vocabulary.Add(new Vocab
@@ -115,8 +119,7 @@ namespace Quizleter.Controllers
             });
             viewModel.Vocabulary = vocabulary;
 
-            var newVocabsBytes = JsonSerializer.SerializeToUtf8Bytes(vocabulary);
-            HttpContext.Session.Set("vocabulary", newVocabsBytes);
+            _sessionService.StoreValue("vocabulary", vocabulary);
 
             viewModel.NewDefinition = string.Empty;
             viewModel.NewTerm = string.Empty;
@@ -156,9 +159,7 @@ namespace Quizleter.Controllers
                 CreatorUsername = User.Identity.Name
             };
 
-            HttpContext.Session.TryGetValue("vocabulary", out byte[] vocabBytes);
-            var vocabulary = JsonSerializer.Deserialize<List<Vocab>>(vocabBytes);
-
+            var vocabulary = _sessionService.GetValue<List<Vocab>>("vocabulary");
             if (!vocabulary.Any())
             {
                 ModelState.AddModelError(nameof(viewModel.Vocabulary), "There's no vocabulary in your learnset.");
@@ -242,11 +243,18 @@ namespace Quizleter.Controllers
         }
 
         // GET: Learnsets/Test/5
-        public async Task<IActionResult> Test(long? id)
+        public async Task<IActionResult> Test(
+            [FromQuery] long? id,
+            [FromBody] TestLearnsetViewModel? viewModel)
         {
             if (id == null)
             {
                 return NotFound();
+            }
+
+            if (viewModel != null)
+            {
+                
             }
 
             var vocabsOfLearnsets = _context.Vocab.Where(v => v.LearnsetId == id);
