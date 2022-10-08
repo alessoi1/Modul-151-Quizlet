@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Quizleter.Data;
 using Quizleter.Models;
 using Quizleter.Services.Learnsets;
+using Quizleter.Services.Session;
 using Quizleter.ViewModels;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -19,12 +19,18 @@ namespace Quizleter.Controllers
     {
         private readonly QuizleterContext _context;
         private readonly ILearnsetService _learnsetService;
+        private readonly ISessionService _sessionService;
         private readonly SignInManager<IdentityUser> _signInManager;
 
-        public LearnsetsController(QuizleterContext context, ILearnsetService learnsetService, SignInManager<IdentityUser> signInManager)
+        public LearnsetsController(
+            QuizleterContext context,
+            ILearnsetService learnsetService, 
+            ISessionService sessionService, 
+            SignInManager<IdentityUser> signInManager)
         {
             _context = context;
             _learnsetService = learnsetService;
+            _sessionService = sessionService;
             _signInManager = signInManager;
         }
 
@@ -80,7 +86,7 @@ namespace Quizleter.Controllers
         {
             if (viewModel.Vocabulary == null)
             {
-                HttpContext.Session.Clear();
+                _sessionService.ClearSession();
                 return View(new CreateLearnsetViewModel
                 {
                     Vocabulary = new List<Vocab>()
@@ -102,10 +108,9 @@ namespace Quizleter.Controllers
 
             var vocabulary = new List<Vocab>();
 
-            if (HttpContext.Session.Keys.Contains("vocabulary"))
+            if (_sessionService.KeyExists("vocabulary"))
             {
-                HttpContext.Session.TryGetValue("vocabulary", out byte[] vocabsBytes);
-                vocabulary = JsonSerializer.Deserialize<List<Vocab>>(vocabsBytes);
+                vocabulary = _sessionService.GetValue<List<Vocab>>("vocabulary");
             }
 
             vocabulary.Add(new Vocab
@@ -115,8 +120,7 @@ namespace Quizleter.Controllers
             });
             viewModel.Vocabulary = vocabulary;
 
-            var newVocabsBytes = JsonSerializer.SerializeToUtf8Bytes(vocabulary);
-            HttpContext.Session.Set("vocabulary", newVocabsBytes);
+            _sessionService.StoreValue("vocabulary", vocabulary);
 
             viewModel.NewDefinition = string.Empty;
             viewModel.NewTerm = string.Empty;
@@ -156,9 +160,7 @@ namespace Quizleter.Controllers
                 CreatorUsername = User.Identity.Name
             };
 
-            HttpContext.Session.TryGetValue("vocabulary", out byte[] vocabBytes);
-            var vocabulary = JsonSerializer.Deserialize<List<Vocab>>(vocabBytes);
-
+            var vocabulary = _sessionService.GetValue<List<Vocab>>("vocabulary");
             if (!vocabulary.Any())
             {
                 ModelState.AddModelError(nameof(viewModel.Vocabulary), "There's no vocabulary in your learnset.");
@@ -241,20 +243,87 @@ namespace Quizleter.Controllers
             return View(vocabsOfLearnsets);
         }
 
-        // GET: Learnsets/Test/5
-        public async Task<IActionResult> Test(long? id)
+        [HttpGet]
+        public async Task<IActionResult> Test(long id)
         {
-            if (id == null)
+            var vocabularyOfLearnset = await _context.Vocab
+                .Where(v => v.LearnsetId == id)
+                .ToListAsync();
+
+            if (vocabularyOfLearnset.Count < 1)
             {
                 return NotFound();
             }
 
-            var vocabsOfLearnsets = _context.Vocab.Where(v => v.LearnsetId == id);
-            if (vocabsOfLearnsets == null)
+            _sessionService.ClearSession();
+
+            var result = new TestLearnsetViewModel
             {
-                return NotFound();
+                LearnsetId = id,
+                Index = 0,
+                Definition = vocabularyOfLearnset[0].Definition
+            };
+
+            return View(result);
+        }
+
+        // POST: Learnsets/Test/5
+        [HttpPost]
+        public async Task<IActionResult> Test(TestLearnsetViewModel viewModel)
+        {
+            var testAnswers = new List<string>();
+            if (_sessionService.KeyExists("testAnswers"))
+            {
+                testAnswers = _sessionService.GetValue<List<string>>("testAnswers");
             }
-            return View(vocabsOfLearnsets);
+
+            testAnswers.Add(viewModel.Input);
+            _sessionService.StoreValue("testAnswers", testAnswers);
+
+            viewModel.Index++;
+            viewModel.Input = string.Empty;
+
+            var vocabularyOfLearnset = await _context.Vocab
+                .Where(l => l.LearnsetId == viewModel.LearnsetId)
+                .ToListAsync();
+            
+            try
+            {
+                viewModel.Definition = vocabularyOfLearnset[viewModel.Index].Definition;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return await TestResult(viewModel.LearnsetId);
+            }
+
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TestResult(long learnsetId)
+        {
+            var answers = _sessionService.GetValue<List<string>>("testAnswers");
+            var vocabularyOfLearnset = await _context.Vocab
+                .Where(v => v.LearnsetId == learnsetId)
+                .ToListAsync();
+
+            var result = new TestResultViewModel
+            {
+                Vocabulary = new List<TestVocabViewModel>()
+            };
+
+            for (int i = 0; i < vocabularyOfLearnset.Count; i++)
+            {
+                result.Vocabulary.Add(new TestVocabViewModel
+                {
+                    Definition = vocabularyOfLearnset[i].Definition,
+                    Term = vocabularyOfLearnset[i].Term,
+                    Answer = answers[i]
+                });
+            }
+
+            result.Points = result.Vocabulary.Count(v => v.Term.Equals(v.Answer));
+            return View("TestResult", result);
         }
 
         // GET: Learnsets/Delete/5

@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Quizleter.Data;
 using Quizleter.Services.Learnsets;
 using Quizleter.Services.Learnsets.Impl;
+using Quizleter.Services.Session;
+using Quizleter.Services.Session.Impl;
 using System;
 
 namespace Quizleter
@@ -42,6 +44,8 @@ namespace Quizleter
             });
 
             services.AddTransient<ILearnsetService, LearnsetService>();
+            services.AddTransient<ISessionService, SessionService>();
+            services.AddHttpContextAccessor();
 
             services.AddControllersWithViews();
 
