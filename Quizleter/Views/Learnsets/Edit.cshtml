@@ -2,23 +2,23 @@
 @model EditLearnsetViewModel
 
 @{
-    ViewData["Title"] = "Edit Learnset";
+    ViewData["Title"] = "Lernset bearbeiten";
 }
 
 <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8">
-        <h1>Edit Learnset</h1>
+        <h1>@ViewData["Title"]</h1>
         <hr />
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input asp-for="Id" hidden />
             <div class="form-group">
-                <input asp-for="Name" placeholder="Name of your learnset" class="form-control" />
+                <input asp-for="Name" placeholder="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="Desc" placeholder="Describe your learnset" class="form-control" />
+                <input asp-for="Desc" placeholder="Beschreibung" class="form-control" />
                 <span asp-validation-for="Desc" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -27,10 +27,10 @@
                         <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger w-100"><i class="fa-solid fa-trash"></i></a>
                     </div>
                     <div class="col-md-4">
-                        <a asp-action="Index" class="btn btn-secondary w-100">Cancel</a>
+                        <a asp-action="Index" class="btn btn-secondary w-100">Abbrechen</a>
                     </div>
                     <div class="col-md-6">
-                        <input type="submit" value="Submit" class="btn btn-primary w-100" />
+                        <input type="submit" value="Bestätigen" class="btn btn-primary w-100" />
                     </div>
                 </div>
             </div>

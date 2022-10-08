@@ -2,7 +2,7 @@
 @model CreateLearnsetViewModel
 
 @{
-    ViewData["Title"] = "Create Learnset";
+    ViewData["Title"] = "Lernset erstellen";
 
     var hasVocabulary = Model.Vocabulary != null && Model.Vocabulary.Any();
 }
@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8">
-        <h1>Create a Learnset</h1>
+        <h1>@ViewData["Title"]</h1>
         <hr />
         <form asp-action="CreatePost">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -18,16 +18,16 @@
             <div class="form-group">
                 @if (hasVocabulary)
                 {
-                    <input asp-for="Title" placeholder="Name of your learnset" class="form-control" />
+                    <input asp-for="Title" placeholder="Name deines Lernsets" class="form-control" />
                 }
                 else
                 {
-                    <input asp-for="Title" placeholder="Name of your learnset" class="form-control" autofocus />
+                    <input asp-for="Title" placeholder="Name deines Lernsets" class="form-control" autofocus />
                 }
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="Description" placeholder="Describe your learnset" class="form-control" />
+                <input asp-for="Description" placeholder="Beschreibung" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -71,10 +71,10 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5">
-                        <a asp-action="Index" class="btn btn-secondary w-100">Cancel</a>
+                        <a asp-action="Index" class="btn btn-secondary w-100">Abbrechen</a>
                     </div>
                     <div class="col-md-7">
-                        <input type="submit" value="Create" class="btn btn-primary w-100" />
+                        <input type="submit" value="Erstellen" class="btn btn-primary w-100" />
                     </div>
                 </div>
             </div>
