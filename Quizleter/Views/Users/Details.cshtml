@@ -34,7 +34,12 @@
                         <h5 class="card-title">@Html.DisplayFor(modelItem => learnset.Name)</h5>
                         <p class="card-text">@Html.DisplayFor(modelItem => learnset.Desc)</p>
                         <p class="card-text">&#64;@Html.DisplayFor(modelItem => learnset.CreatorUsername)</p>
-                        <a asp-action="Learn" asp-route-id="@learnset.Id" class="btn btn-primary w-100">Learn</a>
+                        <div class="btn-group w-100" role="group" aria-label="Basic example">
+                            <a asp-controller="Learnsets" asp-action="Details" asp-route-id="@learnset.Id" class="btn btn-primary">Anschauen</a>
+                            <a asp-controller="Learnsets" asp-action="Edit" asp-route-id="@learnset.Id" class="btn btn-secondary" style="width: 10px;">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

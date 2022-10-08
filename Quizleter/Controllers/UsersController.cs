@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Quizleter.Data;
 using Quizleter.Services.Learnsets;
 using Quizleter.ViewModels;
 using System.Security.Claims;
@@ -25,11 +24,13 @@ namespace Quizleter.Controllers
             _learnsetService = learnsetService;
         }
 
+        [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details()
         {
             if (_signInManager.IsSignedIn(User))
@@ -65,6 +66,7 @@ namespace Quizleter.Controllers
             return View();
         }
 
+        [HttpGet]
         public IActionResult Login()
         {
             return View();

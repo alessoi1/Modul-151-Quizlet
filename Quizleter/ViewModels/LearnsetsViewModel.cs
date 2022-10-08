@@ -5,6 +5,7 @@ namespace Quizleter.ViewModels
 {
     public class LearnsetsViewModel
     {
+        public string SearchText { get; set; }
         public List<Learnset> OwnedLearnsets { get; set; }
         public List<Learnset> OtherLearnsets { get; set; }
 

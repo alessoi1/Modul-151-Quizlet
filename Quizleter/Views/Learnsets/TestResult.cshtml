@@ -1,0 +1,55 @@
+﻿@model Quizleter.ViewModels.TestResultViewModel
+@{
+    ViewData["Title"] = "Test Result";
+}
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <h3>Points: @Model.Points / @Model.Vocabulary.Count</h3>
+        <hr />
+        <div class="row font-weight-bold">
+            <div class="col-md-3">
+                Definition
+            </div>
+            <div class="col-md-3">
+                Correct Answer
+            </div>
+            <div class="col-md-3">
+                Your Answer
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        @foreach (var vocab in Model.Vocabulary)
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    @vocab.Definition
+                </div>
+                <div class="col-md-3">
+                    @vocab.Term
+                </div>
+                <div class="col-md-3">
+                    @vocab.Answer
+                </div>
+                <div class="col-md-3">
+                    @if (vocab.Term.Equals(vocab.Answer))
+                    {
+                        <i class="fa-solid fa-circle-check" style="color: green;"></i>
+                    }
+                    else
+                    {
+                        <i class="fa-solid fa-circle-xmark" style="color: red;"></i>
+                    }
+                </div>
+            </div>
+        }
+        <hr />
+        <a asp-action="Index" class="btn btn-primary w-100">Back to Learnsets</a>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

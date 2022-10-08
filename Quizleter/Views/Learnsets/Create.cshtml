@@ -2,60 +2,79 @@
 @model CreateLearnsetViewModel
 
 @{
-    ViewData["Title"] = "Create Learnset";
+    ViewData["Title"] = "Lernset erstellen";
+
+    var hasVocabulary = Model.Vocabulary != null && Model.Vocabulary.Any();
 }
 
 <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8">
-        <h1>Create a Learnset</h1>
+        <h1>@ViewData["Title"]</h1>
         <hr />
         <form asp-action="CreatePost">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input asp-for="Vocabulary" hidden />
+            <input asp-for="Vocabulary" value="@Model.Vocabulary" hidden />
             <div class="form-group">
-                <input asp-for="Title" placeholder="Name of your learnset" class="form-control" />
+                @if (hasVocabulary)
+                {
+                    <input asp-for="Title" placeholder="Name deines Lernsets" class="form-control" />
+                }
+                else
+                {
+                    <input asp-for="Title" placeholder="Name deines Lernsets" class="form-control" autofocus />
+                }
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="Description" placeholder="Describe your learnset" class="form-control" />
+                <input asp-for="Description" placeholder="Beschreibung" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-md-6">
-                        <input asp-for="NewDefinition" placeholder="Definition" value="@Model.NewDefinition" class="form-control" />
+                    <div class="col-md-5">
+                        @if (hasVocabulary)
+                        {
+                            <input asp-for="NewDefinition" placeholder="Definition" value="@Model.NewDefinition" class="form-control" autofocus />
+                        }
+                        else
+                        {
+                            <input asp-for="NewDefinition" placeholder="Definition" value="@Model.NewDefinition" class="form-control" />
+                        }
                         <span asp-validation-for="NewDefinition" class="text-danger"></span>
                     </div>
                     <div class="col-md-5">
                         <input asp-for="NewTerm" placeholder="Term" value="@Model.NewTerm" class="form-control" />
                         <span asp-validation-for="NewTerm" class="text-danger"></span>
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <input type="submit" formmethod="get" value="+" asp-action="Create" class="btn btn-secondary w-100" />
                     </div>
                 </div>
+                <span asp-validation-for="Vocabulary" class="text-danger"></span>
             </div>
             @foreach (var item in Model.Vocabulary)
             {
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <input value="@item.Definition" class="form-control" disabled />
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-7">
                             <input value="@item.Term" class="form-control" disabled />
                         </div>
                     </div>
                 </div>
             }
+            <hr />
+
             <div class="form-group">
                 <div class="row">
-                    <div class="col-md-6">
-                        <a asp-action="Index" class="btn btn-secondary w-100">Cancel</a>
+                    <div class="col-md-5">
+                        <a asp-action="Index" class="btn btn-secondary w-100">Abbrechen</a>
                     </div>
-                    <div class="col-md-6">
-                        <input type="submit" value="Create" class="btn btn-primary w-100" />
+                    <div class="col-md-7">
+                        <input type="submit" value="Erstellen" class="btn btn-primary w-100" />
                     </div>
                 </div>
             </div>
