@@ -10,7 +10,6 @@ using Quizleter.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Quizleter.Controllers
@@ -92,7 +91,6 @@ namespace Quizleter.Controllers
             return View(result);
         }
 
-        // GET: Learnsets/Create
         [Authorize]
         [HttpGet]
         public IActionResult Create(CreateLearnsetViewModel viewModel)
@@ -141,9 +139,6 @@ namespace Quizleter.Controllers
             return View(viewModel);
         }
 
-        // POST: Learnsets/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -192,7 +187,6 @@ namespace Quizleter.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Learnsets/Edit/5
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Edit(long id)
@@ -239,7 +233,7 @@ namespace Quizleter.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Learnsets/Learn/5
+        [HttpGet]
         public async Task<IActionResult> Cards(long id)
         {
             var vocabsOfLearnsets = await _context.Vocab
@@ -278,7 +272,6 @@ namespace Quizleter.Controllers
             return View(result);
         }
 
-        // POST: Learnsets/Test/5
         [HttpPost]
         public async Task<IActionResult> Test(TestLearnsetViewModel viewModel)
         {
@@ -337,7 +330,7 @@ namespace Quizleter.Controllers
             return View("TestResult", result);
         }
 
-        // GET: Learnsets/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -355,7 +348,6 @@ namespace Quizleter.Controllers
             return View(learnset);
         }
 
-        // POST: Learnsets/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)

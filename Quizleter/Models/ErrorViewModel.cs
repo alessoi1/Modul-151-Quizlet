@@ -1,5 +1,3 @@
-using System;
-
 namespace Quizleter.Models
 {
     public class ErrorViewModel
