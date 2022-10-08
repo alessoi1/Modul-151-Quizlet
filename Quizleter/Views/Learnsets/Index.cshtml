@@ -44,6 +44,17 @@
 <h1>Andere Lernsets</h1>
 <hr />
 
+<form asp-action="Index" method="get">
+    <div class="input-group mb-3">
+        <input asp-for="SearchText" class="form-control form-control-lg" placeholder="Suche">
+        <div class="input-group-append">
+            <button class="btn btn-lg btn-primary" type="submit">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+    </div>
+</form>
+
 <div class="row">
     @foreach (var item in Model.OtherLearnsets)
     {
@@ -60,3 +71,10 @@
         </div>
     }
 </div>
+
+@if (Model.OtherLearnsets.Count == 0)
+{
+    <div class="alert alert-info" role="alert">
+        Keine Lernsets gefunden. Passe die Suche an.
+    </div>
+}

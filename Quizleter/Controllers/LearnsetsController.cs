@@ -34,8 +34,8 @@ namespace Quizleter.Controllers
             _signInManager = signInManager;
         }
 
-        // GET: Learnsets
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(LearnsetsViewModel viewModel)
         {
             var result = new LearnsetsViewModel();
 
@@ -57,6 +57,16 @@ namespace Quizleter.Controllers
                 .Where(l => !l.CreatorUsername.Equals(User.Identity.Name))
                 .ToList();
 
+            if (viewModel.SearchText != null)
+            {
+                var normalizedSearchText = viewModel.SearchText.ToLower();
+
+                result.OtherLearnsets = result.OtherLearnsets
+                    .Where(l => l.Name.ToLower().Contains(normalizedSearchText)
+                                || l.Desc.ToLower().Contains(normalizedSearchText)
+                                || l.CreatorUsername.ToLower().Contains(normalizedSearchText))
+                    .ToList();
+            }
 
             return View(result);
         }
