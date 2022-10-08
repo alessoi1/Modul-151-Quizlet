@@ -61,22 +61,25 @@ namespace Quizleter.Controllers
             return View(result);
         }
 
-        // GET: Learnsets/Details/5
-        public async Task<IActionResult> Details(long? id)
+        [HttpGet]
+        public async Task<IActionResult> Details(long id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var learnset = await _context.Learnset
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var learnset = await _context.Learnset.FindAsync(id);
             if (learnset == null)
             {
                 return NotFound();
             }
 
-            return View(learnset);
+            var result = new LearnsetDetailsViewModel
+            {
+                Id = learnset.Id,
+                Name = learnset.Name,
+                Description = learnset.Desc,
+                Creator = learnset.CreatorUsername,
+                VocabCount = _context.Vocab.Count(v => v.LearnsetId == learnset.Id)
+            };
+
+            return View(result);
         }
 
         // GET: Learnsets/Create
@@ -182,19 +185,18 @@ namespace Quizleter.Controllers
         // GET: Learnsets/Edit/5
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Edit(long? id)
+        public async Task<IActionResult> Edit(long id)
         {
-            if (id == null)
+            var learnset = await _context.Learnset.FindAsync(id);
+            if (learnset == null)
             {
                 return NotFound();
             }
 
-            var learnset = await _context.Learnset.FindAsync(id);
             var username = User.Identity.Name;
-
             if (!learnset.CreatorUsername.Equals(username))
             {
-                return NotFound();
+                return Unauthorized();
             }
 
             var result = new EditLearnsetViewModel
@@ -228,18 +230,17 @@ namespace Quizleter.Controllers
         }
 
         // GET: Learnsets/Learn/5
-        public async Task<IActionResult> Learn(long? id)
+        public async Task<IActionResult> Cards(long id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var vocabsOfLearnsets = await _context.Vocab
+                .Where(v => v.LearnsetId == id)
+                .ToListAsync();
 
-            var vocabsOfLearnsets = _context.Vocab.Where(v => v.LearnsetId == id);
             if (vocabsOfLearnsets == null)
             {
                 return NotFound();
             }
+
             return View(vocabsOfLearnsets);
         }
 

@@ -1,30 +1,21 @@
-﻿@model Quizleter.Models.Learnset
+﻿@model Quizleter.ViewModels.LearnsetDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Learnset</h1>
 
-<div>
-    <h4>Learnset</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Desc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Desc)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="jumbotron">
+    <h1 class="display-4">@Model.Name</h1>
+    <p class="lead">@Model.Description</p>
+    <hr class="my-4">
+    <p>Wortanzahl: @Model.VocabCount</p>
+    <p>Ersteller: &#64;@Model.Creator</p>
+    <div class="lead btn-group">
+        <a asp-action="Index" class="btn btn-lg btn-secondary">Zurück</a>
+        <a asp-action="Cards" asp-route-id="@Model.Id" class="btn btn-lg btn-primary">Karteikarten</a>
+        <a asp-action="Learn" class="btn btn-lg btn-primary">Lernmodus</a>
+        <a asp-action="Test" asp-route-id="@Model.Id" class="btn btn-lg btn-primary">Testen</a>
+    </div>
 </div>
