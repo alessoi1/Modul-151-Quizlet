@@ -43,18 +43,18 @@ namespace Quizleter.Controllers
                 result.OtherLearnsets = (await _learnsetService
                     .GetAllLearnsetsAsync())
                     .ToList();
-
-                return View(result);
             }
-
-            result.OwnedLearnsets = (await _learnsetService
+            else
+            {
+                result.OwnedLearnsets = (await _learnsetService
                 .GetLearnsetsByUserAsync(User.Identity.Name))
                 .ToList();
 
-            result.OtherLearnsets = (await _learnsetService
-                .GetAllLearnsetsAsync())
-                .Where(l => !l.CreatorUsername.Equals(User.Identity.Name))
-                .ToList();
+                result.OtherLearnsets = (await _learnsetService
+                    .GetAllLearnsetsAsync())
+                    .Where(l => !l.CreatorUsername.Equals(User.Identity.Name))
+                    .ToList();
+            }
 
             if (viewModel.SearchText != null)
             {
