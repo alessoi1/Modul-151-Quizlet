@@ -4,18 +4,35 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Learnset</h1>
+<h1>Lernset</h1>
 
 <div class="jumbotron">
-    <h1 class="display-4">@Model.Name</h1>
-    <p class="lead">@Model.Description</p>
+    <h1 class="display-4">@Html.DisplayFor(model => model.Name)</h1>
+    <p class="lead">@Html.DisplayFor(model => model.Description)</p>
     <hr class="my-4">
-    <p>Wortanzahl: @Model.VocabCount</p>
-    <p>Ersteller: &#64;@Model.Creator</p>
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.VocabCount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.VocabCount)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Creator)
+        </dt>
+        <dd class="col-sm-10">
+            &#64;@Html.DisplayFor(model => model.Creator)
+        </dd>
+    </dl>
+
+    <a asp-action="Index" class="btn btn-lg btn-secondary">Zurück</a>
+
     <div class="lead btn-group">
-        <a asp-action="Index" class="btn btn-lg btn-secondary">Zurück</a>
         <a asp-action="Cards" asp-route-id="@Model.Id" class="btn btn-lg btn-primary">Karteikarten</a>
         <a asp-action="Learn" class="btn btn-lg btn-primary">Lernmodus</a>
         <a asp-action="Test" asp-route-id="@Model.Id" class="btn btn-lg btn-primary">Testen</a>
     </div>
+
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-lg btn-secondary float-right"><i class="fa-solid fa-pen-to-square"></i></a>
 </div>

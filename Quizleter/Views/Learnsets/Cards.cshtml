@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Quizleter.Models.Vocab>
+﻿@model Quizleter.ViewModels.CardViewModel
 @{
     ViewData["Title"] = "Karten";
 }
@@ -7,24 +7,56 @@
 <hr />
 
 <div class="row">
-    <div class="col-4"></div>
-    <div class="col-4">
-        @foreach (var item in Model)
+    @for (var i = 0; i < Model.Rows; i++)
+    {
+        if (Model.LeftColumn.Count >= i + 1)
         {
-            <div class="flip-card">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                        <div></div>
-                        <h1 style="padding-top: 40%">@Html.DisplayFor(modelItem => item.Definition)</h1>
-                    </div>
-                    <div class="flip-card-back">
-                        <h1 style="padding-top: 40%">@Html.DisplayFor(modelItem => item.Term)</h1>
+            <div class="col-md-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div></div>
+                            <h1 style="padding-top: 40%">@Model.LeftColumn[i].Definition</h1>
+                        </div>
+                        <div class="flip-card-back">
+                            <h1 style="padding-top: 40%">@Model.LeftColumn[i].Term</h1>
+                        </div>
                     </div>
                 </div>
             </div>
-            <br />
         }
-    </div>
-    <div class="col-4"></div>
+        if (Model.MiddleColumn.Count >= i + 1)
+        {
+            <div class="col-md-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div></div>
+                            <h1 style="padding-top: 40%">@Model.MiddleColumn[i].Definition</h1>
+                        </div>
+                        <div class="flip-card-back">
+                            <h1 style="padding-top: 40%">@Model.MiddleColumn[i].Term</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        if (Model.RightColumn.Count >= i + 1)
+        {
+            <div class="col-md-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div></div>
+                            <h1 style="padding-top: 40%">@Model.RightColumn[i].Definition</h1>
+                        </div>
+                        <div class="flip-card-back">
+                            <h1 style="padding-top: 40%">@Model.RightColumn[i].Term</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
 </div>
 

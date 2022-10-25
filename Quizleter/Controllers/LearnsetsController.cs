@@ -236,16 +236,43 @@ namespace Quizleter.Controllers
         [HttpGet]
         public async Task<IActionResult> Cards(long id)
         {
-            var vocabsOfLearnsets = await _context.Vocab
+            var vocabsOfLearnset = await _context.Vocab
                 .Where(v => v.LearnsetId == id)
                 .ToListAsync();
 
-            if (vocabsOfLearnsets == null)
+            if (vocabsOfLearnset == null)
             {
                 return NotFound();
             }
 
-            return View(vocabsOfLearnsets);
+            var leftColumn = new List<Vocab>();
+            var middleColumn = new List<Vocab>();
+            var rightColumn = new List<Vocab>();
+            var endLoop = false;
+
+            for (var i = 2; !endLoop; i += 3)
+            {
+                try
+                {
+                    leftColumn.Add(vocabsOfLearnset[i - 2]);
+                    middleColumn.Add(vocabsOfLearnset[i - 1]);
+                    rightColumn.Add(vocabsOfLearnset[i]);
+                }
+                catch
+                {
+                    endLoop = true;
+                }
+            }
+
+            var result = new CardViewModel
+            {
+                LeftColumn = leftColumn,
+                MiddleColumn = middleColumn,
+                RightColumn = rightColumn,
+                Rows = Math.Max(leftColumn.Count, Math.Max(middleColumn.Count, rightColumn.Count))
+            };
+
+            return View(result);
         }
 
         [HttpGet]
