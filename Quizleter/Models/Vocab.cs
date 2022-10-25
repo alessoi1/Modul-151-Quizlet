@@ -8,7 +8,6 @@
 
         public string Term { get; set; }
 
-
         public long LearnsetId { get; set; }
 
         public Learnset Learnset { get; set; }

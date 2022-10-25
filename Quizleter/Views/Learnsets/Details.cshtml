@@ -15,7 +15,7 @@
     <div class="lead btn-group">
         <a asp-action="Index" class="btn btn-lg btn-secondary">Zurück</a>
         <a asp-action="Cards" asp-route-id="@Model.Id" class="btn btn-lg btn-primary">Karteikarten</a>
-        <a asp-action="Learn" class="btn btn-lg btn-primary">Lernmodus</a>
+        <a asp-action="Learn" asp-route-id="@Model.Id" class="btn btn-lg btn-primary">Lernmodus</a>
         <a asp-action="Test" asp-route-id="@Model.Id" class="btn btn-lg btn-primary">Testen</a>
     </div>
 </div>
