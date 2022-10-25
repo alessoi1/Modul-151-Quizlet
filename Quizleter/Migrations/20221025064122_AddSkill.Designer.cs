@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Quizleter.Data;
 
 namespace Quizleter.Migrations
 {
     [DbContext(typeof(QuizleterContext))]
-    partial class QuizleterContextModelSnapshot : ModelSnapshot
+    [Migration("20221025064122_AddSkill")]
+    partial class AddSkill
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

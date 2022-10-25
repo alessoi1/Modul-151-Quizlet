@@ -34,6 +34,60 @@ namespace Quizleter.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Learn(long id)
+        {
+            var username = User.Identity.Name;
+            var learnVocabList = await _learnsetService.GetLearnVocabByLernsetId(id, username);
+
+            var voacbWithLowestValue = _learnsetService.GetRandomSkill(learnVocabList);
+
+            var learnVocabModel = new LearnVocabViewModel
+            {
+                Definition = voacbWithLowestValue.Vocab.Definition,
+                LearnsetId = id,
+                VocabId = voacbWithLowestValue.VocabId
+            };
+
+            return View(learnVocabModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Learn(LearnVocabViewModel learnVocabViewModel)
+        {
+            var vocab = _context.Vocab.FirstOrDefault(v => v.Id == learnVocabViewModel.VocabId);
+            var skill = _context.Skill.FirstOrDefault(s => s.VocabId == learnVocabViewModel.VocabId);
+            if (string.Equals(vocab.Term, learnVocabViewModel.Input))
+            {
+                skill.SkillLevel += 1;
+                _context.Skill.Update(skill);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                if (skill.SkillLevel > 0)
+                {
+                    skill.SkillLevel -= 1;
+                }
+                _context.Skill.Update(skill);
+                await _context.SaveChangesAsync();
+            }
+
+            var username = User.Identity.Name;
+            var learnVocabList = await _learnsetService.GetLearnVocabByLernsetId(learnVocabViewModel.LearnsetId, username);
+
+            var voacbWithLowestValue = _learnsetService.GetRandomSkill(learnVocabList);
+
+            var learnVocabModel = new LearnVocabViewModel
+            {
+                Definition = voacbWithLowestValue.Vocab.Definition,
+                LearnsetId = learnVocabViewModel.LearnsetId,
+                VocabId = voacbWithLowestValue.VocabId
+            };
+
+            return View(learnVocabModel);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Index(LearnsetsViewModel viewModel)
         {
             var result = new LearnsetsViewModel();
