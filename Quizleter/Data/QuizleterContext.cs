@@ -24,5 +24,7 @@ namespace Quizleter.Data
         }
 
         public DbSet<Quizleter.ViewModels.LearnVocabViewModel> LearnVocab { get; set; }
+
+        public DbSet<Quizleter.ViewModels.VocabWithSkillsViewModel> VocabWithSkillsViewModel { get; set; }
     }
 }

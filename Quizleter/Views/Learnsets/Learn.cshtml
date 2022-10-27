@@ -35,5 +35,12 @@
             </div>
         </div>
     </form>
+    <form asp-action="Evaluation">
+        <div class="row">
+            <div class="col-md-12">
+                <input input asp-for="LearnsetId" value="@Model.LearnsetId" type="submit" value="Auswertung" class="btn btn-primary w-100" />
+            </div>
+        </div>
+    </form>
 </body>
 </html>

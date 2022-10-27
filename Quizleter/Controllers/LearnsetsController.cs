@@ -52,6 +52,28 @@ namespace Quizleter.Controllers
         }
 
         [HttpPost]
+        public IActionResult Evaluation(long id)
+        {
+            var vocabWithSkills = new List<VocabWithSkillsViewModel>();
+            var voabs = _context.Vocab.Where(v => v.LearnsetId == id)
+                                      .ToList();
+
+            foreach (var vocab in voabs)
+            {
+                vocabWithSkills.Add
+                    (
+                        new VocabWithSkillsViewModel
+                        {
+                            Vocab = vocab,
+                            Skill = _context.Skill.FirstOrDefault(s => s.VocabId == vocab.Id).SkillLevel
+                        }
+                    );
+            }
+
+            return View("Evaluation", vocabWithSkills);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Learn(LearnVocabViewModel learnVocabViewModel)
         {
             var vocab = _context.Vocab.FirstOrDefault(v => v.Id == learnVocabViewModel.VocabId);
