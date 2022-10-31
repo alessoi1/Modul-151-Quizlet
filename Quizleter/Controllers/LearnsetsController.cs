@@ -36,7 +36,21 @@ namespace Quizleter.Controllers
         [HttpGet]
         public async Task<IActionResult> Learn(long id)
         {
+            var skillsCompleted = CheckIfAllSKillsAreCompleted(id);
+
+            if (skillsCompleted is true)
+            {
+                var evaluation = GetEvaluation(id);
+                return View("Evaluation", evaluation);
+            }
+
             var username = User.Identity.Name;
+
+            if (username is null)
+            {
+                return BadRequest();
+            }
+
             var learnVocabList = await _learnsetService.GetLearnVocabByLernsetId(id, username);
 
             var voacbWithLowestValue = _learnsetService.GetRandomSkill(learnVocabList);
@@ -52,8 +66,24 @@ namespace Quizleter.Controllers
         }
 
         [HttpPost]
+        public IActionResult Evaluation(long id)
+        {
+            var evaluation = GetEvaluation(id);
+
+            return View("Evaluation", evaluation);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Learn(LearnVocabViewModel learnVocabViewModel)
         {
+            var skillsCompleted = CheckIfAllSKillsAreCompleted(learnVocabViewModel.LearnsetId);
+
+            if (skillsCompleted is true)
+            {
+                var evaluation = GetEvaluation(learnVocabViewModel.LearnsetId);
+                return View("Evaluation", evaluation);
+            }
+
             var vocab = _context.Vocab.FirstOrDefault(v => v.Id == learnVocabViewModel.VocabId);
             var skill = _context.Skill.FirstOrDefault(s => s.VocabId == learnVocabViewModel.VocabId);
             if (string.Equals(vocab.Term, learnVocabViewModel.Input))
@@ -97,18 +127,18 @@ namespace Quizleter.Controllers
                 result.OtherLearnsets = (await _learnsetService
                     .GetAllLearnsetsAsync())
                     .ToList();
-
-                return View(result);
             }
-
-            result.OwnedLearnsets = (await _learnsetService
+            else
+            {
+                result.OwnedLearnsets = (await _learnsetService
                 .GetLearnsetsByUserAsync(User.Identity.Name))
                 .ToList();
 
-            result.OtherLearnsets = (await _learnsetService
-                .GetAllLearnsetsAsync())
-                .Where(l => !l.CreatorUsername.Equals(User.Identity.Name))
-                .ToList();
+                result.OtherLearnsets = (await _learnsetService
+                    .GetAllLearnsetsAsync())
+                    .Where(l => !l.CreatorUsername.Equals(User.Identity.Name))
+                    .ToList();
+            }
 
             if (viewModel.SearchText != null)
             {
@@ -290,16 +320,43 @@ namespace Quizleter.Controllers
         [HttpGet]
         public async Task<IActionResult> Cards(long id)
         {
-            var vocabsOfLearnsets = await _context.Vocab
+            var vocabsOfLearnset = await _context.Vocab
                 .Where(v => v.LearnsetId == id)
                 .ToListAsync();
 
-            if (vocabsOfLearnsets == null)
+            if (vocabsOfLearnset == null)
             {
                 return NotFound();
             }
 
-            return View(vocabsOfLearnsets);
+            var leftColumn = new List<Vocab>();
+            var middleColumn = new List<Vocab>();
+            var rightColumn = new List<Vocab>();
+            var endLoop = false;
+
+            for (var i = 2; !endLoop; i += 3)
+            {
+                try
+                {
+                    leftColumn.Add(vocabsOfLearnset[i - 2]);
+                    middleColumn.Add(vocabsOfLearnset[i - 1]);
+                    rightColumn.Add(vocabsOfLearnset[i]);
+                }
+                catch
+                {
+                    endLoop = true;
+                }
+            }
+
+            var result = new CardViewModel
+            {
+                LeftColumn = leftColumn,
+                MiddleColumn = middleColumn,
+                RightColumn = rightColumn,
+                Rows = Math.Max(leftColumn.Count, Math.Max(middleColumn.Count, rightColumn.Count))
+            };
+
+            return View(result);
         }
 
         [HttpGet]
@@ -415,6 +472,50 @@ namespace Quizleter.Controllers
         private bool LearnsetExists(long id)
         {
             return _context.Learnset.Any(e => e.Id == id);
+        }
+
+        private bool CheckIfAllSKillsAreCompleted(long id)
+        {
+            var skills = new List<Skill>();
+            var vocabs = _context.Vocab.Where(v => v.LearnsetId == id)
+                                       .ToList();
+
+            foreach (var voc in vocabs)
+            {
+                skills.Add(_context.Skill.FirstOrDefault(s => s.VocabId == voc.Id));
+            }
+
+            foreach (var skill in skills)
+            {
+                if (skill.SkillLevel < 10)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private List<VocabWithSkillsViewModel> GetEvaluation(long id)
+        {
+            var vocabWithSkills = new List<VocabWithSkillsViewModel>();
+            var voabs = _context.Vocab.Where(v => v.LearnsetId == id)
+                                      .ToList();
+
+            foreach (var vocab in voabs)
+            {
+                vocabWithSkills.Add
+                    (
+                        new VocabWithSkillsViewModel
+                        {
+                            Vocab = vocab,
+                            Skill = _context.Skill.FirstOrDefault(s => s.VocabId == vocab.Id).SkillLevel,
+                            LearnsetId = id
+                        }
+                    );
+            }
+
+            return vocabWithSkills;
         }
     }
 }

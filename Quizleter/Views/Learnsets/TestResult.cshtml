@@ -6,17 +6,17 @@
 <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8">
-        <h3>Points: @Model.Points / @Model.Vocabulary.Count</h3>
+        <h3>@Html.DisplayNameFor(model => model.Points): @Html.DisplayFor(model => model.Points) / @Model.Vocabulary.Count</h3>
         <hr />
         <div class="row font-weight-bold">
             <div class="col-md-3">
                 Definition
             </div>
             <div class="col-md-3">
-                Correct Answer
+                Korrekte Antwort
             </div>
             <div class="col-md-3">
-                Your Answer
+                Deine Antwort
             </div>
             <div class="col-md-3"></div>
         </div>
@@ -45,7 +45,7 @@
             </div>
         }
         <hr />
-        <a asp-action="Index" class="btn btn-primary w-100">Back to Learnsets</a>
+        <a asp-action="Index" class="btn btn-primary w-100">Zurück zu den Lernsets</a>
     </div>
     <div class="col-md-2"></div>
 </div>

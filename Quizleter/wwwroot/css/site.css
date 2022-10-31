@@ -110,9 +110,10 @@ body {
 
 .flip-card {
     background-color: transparent;
-    width: 300px;
-    height: 300px;
-    perspective: 1000px;
+    width: 250px;
+    height: 250px;
+    margin: 30px auto;
+    perspective: 500px;
     border-radius: 20px;
     text-align: center;
 }
