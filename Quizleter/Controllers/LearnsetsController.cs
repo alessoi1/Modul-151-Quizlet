@@ -36,6 +36,14 @@ namespace Quizleter.Controllers
         [HttpGet]
         public async Task<IActionResult> Learn(long id)
         {
+            var skillsCompleted = CheckIfAllSKillsAreCompleted(id);
+
+            if (skillsCompleted is true)
+            {
+                var evaluation = GetEvaluation(id);
+                return View("Evaluation", evaluation);
+            }
+
             var username = User.Identity.Name;
 
             if (username is null)
@@ -60,29 +68,22 @@ namespace Quizleter.Controllers
         [HttpPost]
         public IActionResult Evaluation(long id)
         {
-            var vocabWithSkills = new List<VocabWithSkillsViewModel>();
-            var voabs = _context.Vocab.Where(v => v.LearnsetId == id)
-                                      .ToList();
+            var evaluation = GetEvaluation(id);
 
-            foreach (var vocab in voabs)
-            {
-                vocabWithSkills.Add
-                    (
-                        new VocabWithSkillsViewModel
-                        {
-                            Vocab = vocab,
-                            Skill = _context.Skill.FirstOrDefault(s => s.VocabId == vocab.Id).SkillLevel,
-                            LearnsetId = id
-                        }
-                    );
-            }
-
-            return View("Evaluation", vocabWithSkills);
+            return View("Evaluation", evaluation);
         }
 
         [HttpPost]
         public async Task<IActionResult> Learn(LearnVocabViewModel learnVocabViewModel)
         {
+            var skillsCompleted = CheckIfAllSKillsAreCompleted(learnVocabViewModel.LearnsetId);
+
+            if (skillsCompleted is true)
+            {
+                var evaluation = GetEvaluation(learnVocabViewModel.LearnsetId);
+                return View("Evaluation", evaluation);
+            }
+
             var vocab = _context.Vocab.FirstOrDefault(v => v.Id == learnVocabViewModel.VocabId);
             var skill = _context.Skill.FirstOrDefault(s => s.VocabId == learnVocabViewModel.VocabId);
             if (string.Equals(vocab.Term, learnVocabViewModel.Input))
@@ -471,6 +472,50 @@ namespace Quizleter.Controllers
         private bool LearnsetExists(long id)
         {
             return _context.Learnset.Any(e => e.Id == id);
+        }
+
+        private bool CheckIfAllSKillsAreCompleted(long id)
+        {
+            var skills = new List<Skill>();
+            var vocabs = _context.Vocab.Where(v => v.LearnsetId == id)
+                                       .ToList();
+
+            foreach (var voc in vocabs)
+            {
+                skills.Add(_context.Skill.FirstOrDefault(s => s.VocabId == voc.Id));
+            }
+
+            foreach (var skill in skills)
+            {
+                if (skill.SkillLevel < 10)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private List<VocabWithSkillsViewModel> GetEvaluation(long id)
+        {
+            var vocabWithSkills = new List<VocabWithSkillsViewModel>();
+            var voabs = _context.Vocab.Where(v => v.LearnsetId == id)
+                                      .ToList();
+
+            foreach (var vocab in voabs)
+            {
+                vocabWithSkills.Add
+                    (
+                        new VocabWithSkillsViewModel
+                        {
+                            Vocab = vocab,
+                            Skill = _context.Skill.FirstOrDefault(s => s.VocabId == vocab.Id).SkillLevel,
+                            LearnsetId = id
+                        }
+                    );
+            }
+
+            return vocabWithSkills;
         }
     }
 }
