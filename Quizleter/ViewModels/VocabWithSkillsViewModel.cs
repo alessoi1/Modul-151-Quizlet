@@ -9,5 +9,7 @@ namespace Quizleter.ViewModels
         public Vocab Vocab { get; set; }
 
         public long Skill { get; set; }
+
+        public long LearnsetId { get; set; }
     }
 }

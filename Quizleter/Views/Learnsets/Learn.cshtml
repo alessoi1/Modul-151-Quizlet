@@ -35,12 +35,11 @@
             </div>
         </div>
     </form>
-    <form asp-action="Evaluation">
+    <form asp-action="Evaluation" asp-route-id="@Model.LearnsetId">
         <div class="row">
             <div class="col-md-12">
-                <input input asp-for="LearnsetId" value="@Model.LearnsetId" type="submit" value="Auswertung" class="btn btn-primary w-100" />
+                <input type="submit" value="Auswerten" class="btn btn-primary w-100" />
             </div>
-        </div>
     </form>
 </body>
 </html>
