@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Quizleter.ViewModels.VocabWithSkillsViewModel>
+
+@{
+    ViewData["Title"] = "Evaluation";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Evaluation</title>
+</head>
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Vocab.Definition)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Vocab.Term)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Skill)
+                </th>
+                <th>
+                    Status
+                </th>
+            </tr>
+        </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vocab.Definition)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vocab.Term)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Skill)
+             </td>
+             <td>
+                 @if (item.Skill >= 0 && item.Skill < 5)
+                        {
+                            <p style="color: red">Schlecht</p>
+                        }
+                        else if (item.Skill > 5 && item.Skill < 7)
+                        {
+                            <p style="color: orange">Gut</p>
+                        }
+                        else if (item.Skill > 7 && item.Skill >= 10)
+                        {
+                            <p style="color: green">Sehr gut</p>
+                        }
+             </td>
+        </tr>
+}
+    </tbody>
+</table>
+</body>
+</html>

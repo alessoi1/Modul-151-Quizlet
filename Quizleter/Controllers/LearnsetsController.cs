@@ -37,6 +37,12 @@ namespace Quizleter.Controllers
         public async Task<IActionResult> Learn(long id)
         {
             var username = User.Identity.Name;
+
+            if (username is null)
+            {
+                return BadRequest();
+            }
+
             var learnVocabList = await _learnsetService.GetLearnVocabByLernsetId(id, username);
 
             var voacbWithLowestValue = _learnsetService.GetRandomSkill(learnVocabList);
@@ -49,6 +55,29 @@ namespace Quizleter.Controllers
             };
 
             return View(learnVocabModel);
+        }
+
+        [HttpPost]
+        public IActionResult Evaluation(long id)
+        {
+            var vocabWithSkills = new List<VocabWithSkillsViewModel>();
+            var voabs = _context.Vocab.Where(v => v.LearnsetId == id)
+                                      .ToList();
+
+            foreach (var vocab in voabs)
+            {
+                vocabWithSkills.Add
+                    (
+                        new VocabWithSkillsViewModel
+                        {
+                            Vocab = vocab,
+                            Skill = _context.Skill.FirstOrDefault(s => s.VocabId == vocab.Id).SkillLevel,
+                            LearnsetId = id
+                        }
+                    );
+            }
+
+            return View("Evaluation", vocabWithSkills);
         }
 
         [HttpPost]
