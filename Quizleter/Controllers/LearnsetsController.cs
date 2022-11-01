@@ -23,8 +23,8 @@ namespace Quizleter.Controllers
 
         public LearnsetsController(
             QuizleterContext context,
-            ILearnsetService learnsetService, 
-            ISessionService sessionService, 
+            ILearnsetService learnsetService,
+            ISessionService sessionService,
             SignInManager<IdentityUser> signInManager)
         {
             _context = context;
@@ -36,32 +36,20 @@ namespace Quizleter.Controllers
         [HttpGet]
         public async Task<IActionResult> Learn(long id)
         {
-            var skillsCompleted = CheckIfAllSKillsAreCompleted(id);
+            var username = User.Identity.Name;
+            if (username is null)
+            {
+                return BadRequest();
+            }
 
+            var skillsCompleted = CheckIfAllSKillsAreCompleted(id);
             if (skillsCompleted is true)
             {
                 var evaluation = GetEvaluation(id);
                 return View("Evaluation", evaluation);
             }
 
-            var username = User.Identity.Name;
-
-            if (username is null)
-            {
-                return BadRequest();
-            }
-
-            var learnVocabList = await _learnsetService.GetLearnVocabByLernsetId(id, username);
-
-            var voacbWithLowestValue = _learnsetService.GetRandomSkill(learnVocabList);
-
-            var learnVocabModel = new LearnVocabViewModel
-            {
-                Definition = voacbWithLowestValue.Vocab.Definition,
-                LearnsetId = id,
-                VocabId = voacbWithLowestValue.VocabId
-            };
-
+            var learnVocabModel = await GetRandomSkillAsync(id, username);
             return View(learnVocabModel);
         }
 
@@ -73,12 +61,38 @@ namespace Quizleter.Controllers
             return View("Evaluation", evaluation);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ResetVocab(long id)
+        {
+            var vocabs = _context.Vocab.Where(v => v.LearnsetId == id)
+                                       .ToList();
+            foreach (var voc in vocabs)
+            {
+                var skill = _context.Skill.FirstOrDefault(s => s.VocabId == voc.Id);
+                skill.SkillLevel = 0;
+
+                _context.Skill.Update(skill);
+                _context.SaveChanges();
+            }
+
+            var username = User.Identity.Name;
+
+            if (username is null)
+            {
+                return BadRequest();
+            }
+
+            var learnVocabModel = await GetRandomSkillAsync(id, username);
+
+            return View("Learn", learnVocabModel);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Learn(LearnVocabViewModel learnVocabViewModel)
         {
             var skillsCompleted = CheckIfAllSKillsAreCompleted(learnVocabViewModel.LearnsetId);
 
-            if (skillsCompleted is true)
+            if (skillsCompleted)
             {
                 var evaluation = GetEvaluation(learnVocabViewModel.LearnsetId);
                 return View("Evaluation", evaluation);
@@ -100,6 +114,18 @@ namespace Quizleter.Controllers
                 }
                 _context.Skill.Update(skill);
                 await _context.SaveChangesAsync();
+            }
+
+            var correctAnswer = _context.Vocab.Find(learnVocabViewModel.VocabId).Term;
+            if (!string.Equals(learnVocabViewModel.Input, correctAnswer))
+            {
+                var wrongAnswerViewModel = new WrongAnswerViewModel
+                {
+                    CorrectAnswer = correctAnswer,
+                    WrongAnswer = learnVocabViewModel.Input,
+                    LearnsetId = learnVocabViewModel.LearnsetId
+                };
+                return View("WrongAnswer", wrongAnswerViewModel);
             }
 
             var username = User.Identity.Name;
@@ -401,7 +427,7 @@ namespace Quizleter.Controllers
             var vocabularyOfLearnset = await _context.Vocab
                 .Where(l => l.LearnsetId == viewModel.LearnsetId)
                 .ToListAsync();
-            
+
             try
             {
                 viewModel.Definition = vocabularyOfLearnset[viewModel.Index].Definition;
@@ -438,6 +464,8 @@ namespace Quizleter.Controllers
             }
 
             result.Points = result.Vocabulary.Count(v => v.Term.Equals(v.Answer));
+            result.Percentage = 100 / result.Vocabulary.Count * result.Points;
+
             return View("TestResult", result);
         }
 
@@ -487,7 +515,7 @@ namespace Quizleter.Controllers
 
             foreach (var skill in skills)
             {
-                if (skill.SkillLevel < 10)
+                if (skill.SkillLevel < 4)
                 {
                     return false;
                 }
@@ -516,6 +544,22 @@ namespace Quizleter.Controllers
             }
 
             return vocabWithSkills;
+        }
+
+        private async Task<LearnVocabViewModel> GetRandomSkillAsync(long id, string username)
+        {
+            var learnVocabList = await _learnsetService.GetLearnVocabByLernsetId(id, username);
+
+            var voacbWithLowestValue = _learnsetService.GetRandomSkill(learnVocabList);
+
+            var learnVocabModel = new LearnVocabViewModel
+            {
+                Definition = voacbWithLowestValue.Vocab.Definition,
+                LearnsetId = id,
+                VocabId = voacbWithLowestValue.VocabId
+            };
+
+            return learnVocabModel;
         }
     }
 }

@@ -2,6 +2,7 @@
 using Quizleter.Data;
 using Quizleter.Models;
 using Quizleter.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -68,7 +69,11 @@ namespace Quizleter.Services.Learnsets.Impl
         public Skill GetRandomSkill(IEnumerable<Skill> learnVocabList)
         {
             var lowestSkillValue = learnVocabList.Min(s => s.SkillLevel);
-            var voacbWithLowestValue = learnVocabList.FirstOrDefault(s => s.SkillLevel == lowestSkillValue);
+
+            var rand = new Random();
+            var voacbWithLowestValue = learnVocabList
+                .OrderBy(x => rand.NextDouble())
+                .FirstOrDefault(s => s.SkillLevel == lowestSkillValue || s.SkillLevel == lowestSkillValue + 1 && s.SkillLevel <= 4);
 
             return voacbWithLowestValue;
         }

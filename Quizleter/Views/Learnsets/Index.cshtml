@@ -18,7 +18,7 @@
     @foreach (var item in Model.OwnedLearnsets)
     {
         <div class="col-md-4">
-            <div class="card">
+            <div class="card hover-scale">
                 <img class="card-img-top" src="/img/logo-full.png" alt="Card image cap">
                 <div class="card-body">
                     <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
@@ -59,7 +59,7 @@
     @foreach (var item in Model.OtherLearnsets)
     {
         <div class="col-md-4">
-            <div class="card">
+            <div class="card hover-scale">
                 <img class="card-img-top" src="/img/logo-full.png" alt="Card image cap">
                 <div class="card-body">
                     <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
