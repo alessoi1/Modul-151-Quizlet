@@ -1,0 +1,18 @@
+﻿@model Quizleter.ViewModels.WrongAnswerViewModel
+
+@{
+    ViewData["Title"] = "Learn";
+}
+
+<div class="alert alert-danger">Deine Antwort (@Model.WrongAnswer) war leider falsch.</div>
+
+<p>Bitte geben Sie die korrekte Antwort im unten stehenden Feld an.</p>
+
+<form>
+    <div class="form-group">
+        <input placeholder="@Model.CorrectAnswer" value="" class="form-control" autofocus pattern="@Model.CorrectAnswer" required />
+    </div>
+    <div class="form-group">
+        <input type="submit" asp-action="Learn" asp-route-id="@Model.LearnsetId" value="Weiter" class="btn btn-primary w-100" />
+    </div>
+</form>

@@ -92,7 +92,7 @@ body {
     border: 1px solid #000;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
     color: #000;
     background-color: #EEE;
     border: 1px solid #000;
