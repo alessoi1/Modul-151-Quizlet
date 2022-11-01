@@ -50,7 +50,7 @@
                         {
                             <p style="color: orange">Gut</p>
                         }
-                        else if (item.Skill > 7 && item.Skill >= 10)
+                        else if (item.Skill > 7 && item.Skill <= 10)
                         {
                             <p style="color: green">Sehr gut</p>
                         }
@@ -60,7 +60,14 @@
     </tbody>
 </table>
 
-    <a asp-action="Learn" asp-route-id="@Model.First().LearnsetId" class="btn btn-secondary w-100">Zurück</a>
+    <div class="row">
+        <div class="col-6">
+            <a asp-action="Learn" asp-route-id="@Model.First().LearnsetId" class="btn btn-secondary w-100">Zurück</a>
+        </div>
+        <div class="col-6">
+            <a asp-action="ResetVocab" asp-route-id="@Model.First().LearnsetId" class="btn btn-primary w-100">Zurücksetzen</a>
+        </div>
+    </div>
 
 </body>
 </html>
