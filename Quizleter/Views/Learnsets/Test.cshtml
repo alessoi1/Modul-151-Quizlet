@@ -3,37 +3,31 @@
     ViewData["Title"] = "Test";
 }
 
-<div class="row">
-    <div class="col-md-2"></div>
-    <div class="col-md-8">
-        <h1>@ViewData["Title"]</h1>
-        <hr />
-        <form asp-action="Test" autocomplete="off">
-            <input asp-for="LearnsetId" value="@Model.LearnsetId" hidden />
-            <input asp-for="Index" value="@Model.Index" hidden />
+<h1>@ViewData["Title"]</h1>
+<hr />
+<form asp-action="Test" autocomplete="off">
+    <input asp-for="LearnsetId" value="@Model.LearnsetId" hidden />
+    <input asp-for="Index" value="@Model.Index" hidden />
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <input type="text" placeholder="@Model.Definition" class="form-control" disabled />
-            </div>
-            <div class="form-group">
-                <input asp-for="Input" placeholder="Eingabe" value="" class="form-control" autofocus />
-                <span asp-validation-for="Input" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-5">
-                        <a asp-action="Details" asp-route-id="@Model.LearnsetId" class="btn btn-secondary w-100">Zurück</a>
-                    </div>
-                    <div class="col-md-7">
-                        <input type="submit" value="Weiter" class="btn btn-primary w-100" />
-                    </div>
-                </div>
-            </div>
-        </form>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <input type="text" placeholder="@Model.Definition" class="form-control" disabled />
     </div>
-    <div class="col-md-2"></div>
-</div>
+    <div class="form-group">
+        <input asp-for="Input" placeholder="Eingabe" value="" class="form-control" autofocus />
+        <span asp-validation-for="Input" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-5">
+                <a asp-action="Details" asp-route-id="@Model.LearnsetId" class="btn btn-secondary w-100">Zurück</a>
+            </div>
+            <div class="col-md-7">
+                <input type="submit" value="Weiter" class="btn btn-primary w-100" />
+            </div>
+        </div>
+    </div>
+</form>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

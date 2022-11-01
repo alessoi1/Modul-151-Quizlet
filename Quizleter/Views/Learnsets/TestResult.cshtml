@@ -3,36 +3,54 @@
     ViewData["Title"] = "Test Result";
 }
 
-<div class="row">
-    <div class="col-md-2"></div>
-    <div class="col-md-8">
-        <h3>@Html.DisplayNameFor(model => model.Points): @Html.DisplayFor(model => model.Points) / @Model.Vocabulary.Count</h3>
-        <hr />
-        <div class="row font-weight-bold">
-            <div class="col-md-3">
-                Definition
-            </div>
-            <div class="col-md-3">
-                Korrekte Antwort
-            </div>
-            <div class="col-md-3">
-                Deine Antwort
-            </div>
-            <div class="col-md-3"></div>
-        </div>
+<h3>@Html.DisplayNameFor(model => model.Points): @Html.DisplayFor(model => model.Points) / @Model.Vocabulary.Count</h3>
+
+@if (Model.Percentage == 100)
+{
+    <p>
+        Super! Du hast alles richtig beantwortet. Weiter so!
+    </p>
+}
+else if (Model.Percentage >= 75)
+{
+    <p>
+        Gute Arbeit! Bald hast du das Vokabular vollständig im Griff.
+    </p>
+}
+else if (Model.Percentage >= 50)
+{
+    <p>
+        Nicht schlecht. Übung macht den Meister.
+    </p>
+}
+else
+{
+    <p>
+        Kopf hoch. Mit dem Lernmodus kannst du dein Vokabular verbessern.
+    </p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Definition</th>
+            <th>Korrekte Antwort</th>
+            <th>Deine Antwort</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
         @foreach (var vocab in Model.Vocabulary)
         {
-            <div class="row">
-                <div class="col-md-3">
-                    @vocab.Definition
-                </div>
-                <div class="col-md-3">
+            <tr>
+                <td>@vocab.Definition</td>
+                <td>
                     @vocab.Term
-                </div>
-                <div class="col-md-3">
+                </td>
+                <td>
                     @vocab.Answer
-                </div>
-                <div class="col-md-3">
+                </td>
+                <td>
                     @if (vocab.Term.Equals(vocab.Answer))
                     {
                         <i class="fa-solid fa-circle-check" style="color: green;"></i>
@@ -41,14 +59,13 @@
                     {
                         <i class="fa-solid fa-circle-xmark" style="color: red;"></i>
                     }
-                </div>
-            </div>
+                </td>
+            </tr>
         }
-        <hr />
-        <a asp-action="Index" class="btn btn-primary w-100">Zurück zu den Lernsets</a>
-    </div>
-    <div class="col-md-2"></div>
-</div>
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-primary w-100">Zurück zu den Lernsets</a>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

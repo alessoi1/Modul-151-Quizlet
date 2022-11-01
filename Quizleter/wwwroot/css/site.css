@@ -160,3 +160,24 @@ body {
 .card {
     margin-bottom: 20px;
 }
+
+/* Table
+-------------------------------------------------- */
+
+.table tbody tr:hover {
+    background-color: #e1e1e1;
+}
+
+.table i {
+    font-size: 20pt;
+}
+
+/* Effects
+-------------------------------------------------- */
+.hover-scale {
+    transition: 0.3s;
+}
+
+.hover-scale:hover {
+    transform: scale(105%);
+}

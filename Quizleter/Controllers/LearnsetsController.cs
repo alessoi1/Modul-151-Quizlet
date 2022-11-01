@@ -438,6 +438,8 @@ namespace Quizleter.Controllers
             }
 
             result.Points = result.Vocabulary.Count(v => v.Term.Equals(v.Answer));
+            result.Percentage = 100 / result.Vocabulary.Count * result.Points;
+
             return View("TestResult", result);
         }
 

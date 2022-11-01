@@ -9,5 +9,7 @@ namespace Quizleter.ViewModels
 
         [DisplayName("Punkte")]
         public int Points { get; set; }
+
+        public int Percentage { get; set; }
     }
 }
