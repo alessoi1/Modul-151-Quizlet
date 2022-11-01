@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using Quizleter.Data;
 using Quizleter.Models;
 using Quizleter.Services.Learnsets;
@@ -51,16 +52,7 @@ namespace Quizleter.Controllers
                 return BadRequest();
             }
 
-            var learnVocabList = await _learnsetService.GetLearnVocabByLernsetId(id, username);
-
-            var voacbWithLowestValue = _learnsetService.GetRandomSkill(learnVocabList);
-
-            var learnVocabModel = new LearnVocabViewModel
-            {
-                Definition = voacbWithLowestValue.Vocab.Definition,
-                LearnsetId = id,
-                VocabId = voacbWithLowestValue.VocabId
-            };
+            var learnVocabModel = await GetRandomSkillAsync(id, username);
 
             return View(learnVocabModel);
         }
@@ -71,6 +63,32 @@ namespace Quizleter.Controllers
             var evaluation = GetEvaluation(id);
 
             return View("Evaluation", evaluation);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetVocab(long id)
+        {
+            var vocabs = _context.Vocab.Where(v => v.LearnsetId == id)
+                                       .ToList();
+            foreach (var voc in vocabs)
+            {
+                var skill = _context.Skill.FirstOrDefault(s => s.VocabId == voc.Id);
+                skill.SkillLevel = 0;
+
+                _context.Skill.Update(skill);
+                _context.SaveChanges();
+            }
+
+            var username = User.Identity.Name;
+
+            if (username is null)
+            {
+                return BadRequest();
+            }
+
+            var learnVocabModel = await GetRandomSkillAsync(id, username);
+
+            return View("Learn", learnVocabModel);
         }
 
         [HttpPost]
@@ -516,6 +534,22 @@ namespace Quizleter.Controllers
             }
 
             return vocabWithSkills;
+        }
+
+        private async Task<LearnVocabViewModel> GetRandomSkillAsync(long id, string username)
+        {
+            var learnVocabList = await _learnsetService.GetLearnVocabByLernsetId(id, username);
+
+            var voacbWithLowestValue = _learnsetService.GetRandomSkill(learnVocabList);
+
+            var learnVocabModel = new LearnVocabViewModel
+            {
+                Definition = voacbWithLowestValue.Vocab.Definition,
+                LearnsetId = id,
+                VocabId = voacbWithLowestValue.VocabId
+            };
+
+            return learnVocabModel;
         }
     }
 }
