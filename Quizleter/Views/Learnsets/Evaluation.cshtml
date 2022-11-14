@@ -1,75 +1,78 @@
-﻿@model IEnumerable<Quizleter.ViewModels.VocabWithSkillsViewModel>
+﻿@model Quizleter.ViewModels.EvaluationViewModel
 
 @{
     ViewData["Title"] = "Evaluation";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Evaluation</title>
-</head>
-<body>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Vocab.Definition)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Vocab.Term)
-                </th>
-                <th>
-                    Status
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Vocab.Definition)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Vocab.Term)
-                    </td>
-                    <td>
-                        @if (item.Skill < 2)
-                        {
-                            <p style="color: red">Schlecht</p>
-                        }
-                        else if (item.Skill < 4)
-                        {
-                            <p style="color: orange">Gut</p>
-                        }
-                        else if (item.Skill >= 4)
-                        {
-                            <p style="color: green">Sehr gut</p>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <div class="row">
-        <div class="col-6">
-            @if (Model.Any(s => s.Skill < 4))
-            {
-                <a asp-action="Learn" asp-route-id="@Model.First().LearnsetId" class="btn btn-secondary w-100">Zurück zum Lernmodus</a>
-            }
-            else
-            {
-                <input value="Zurück zum Lernmodus" class="btn btn-secondary w-100" disabled />
-            }
-        </div>
-        <div class="col-6">
-            <a asp-action="ResetVocab" asp-route-id="@Model.First().LearnsetId" class="btn btn-primary w-100">Zurücksetzen</a>
+<div class="row">
+    <div class="col-sm-4">
+    </div>
+    <div class="col-sm-4">
+        <div class="card hover-scale text-center">
+            <div class="card-body">
+                <div class="pie" style="--p:@Model.Percentage;--b:30px;--c:purple;">@Model.Percentage%</div>
+            </div>
         </div>
     </div>
+    <div class="col-sm-4">
+    </div>
+</div>
 
-</body>
-</html>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Definition
+            </th>
+            <th>
+                Term
+            </th>
+            <th>
+                Status
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.VocabsWithSkills)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Vocab.Definition)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Vocab.Term)
+                </td>
+                <td>
+                    @if (item.Skill < 2)
+                    {
+                        <p style="color: red">Schlecht</p>
+                    }
+                    else if (item.Skill < 4)
+                    {
+                        <p style="color: orange">Gut</p>
+                    }
+                    else if (item.Skill >= 4)
+                    {
+                        <p style="color: green">Sehr gut</p>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="col-6">
+        @if (Model.VocabsWithSkills.Any(s => s.Skill < 4))
+        {
+            <a asp-action="Learn" asp-route-id="@Model.VocabsWithSkills.First().LearnsetId" class="btn btn-secondary w-100">Zurück zum Lernmodus</a>
+        }
+        else
+        {
+            <input value="Zurück zum Lernmodus" class="btn btn-secondary w-100" disabled />
+        }
+    </div>
+    <div class="col-6">
+        <a asp-action="ResetVocab" asp-route-id="@Model.VocabsWithSkills.First().LearnsetId" class="btn btn-primary w-100">Zurücksetzen</a>
+    </div>
+</div>

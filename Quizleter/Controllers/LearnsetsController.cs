@@ -510,7 +510,23 @@ namespace Quizleter.Controllers
 
             foreach (var voc in vocabs)
             {
-                skills.Add(_context.Skill.FirstOrDefault(s => s.VocabId == voc.Id));
+                var skill = _context.Skill.FirstOrDefault(s =>
+                    s.VocabId == voc.Id && string.Equals(s.Username, User.Identity.Name));
+
+                if (skill is null)
+                {
+                    skill = new Skill
+                    {
+                        Username = User.Identity.Name,
+                        VocabId = voc.Id,
+                        SkillLevel = 0
+                    };
+
+                    _context.Skill.Add(skill);
+                    _context.SaveChanges();
+                }
+
+                skills.Add(skill);
             }
 
             foreach (var skill in skills)
@@ -524,26 +540,35 @@ namespace Quizleter.Controllers
             return true;
         }
 
-        private List<VocabWithSkillsViewModel> GetEvaluation(long id)
+        private EvaluationViewModel GetEvaluation(long id)
         {
-            var vocabWithSkills = new List<VocabWithSkillsViewModel>();
-            var voabs = _context.Vocab.Where(v => v.LearnsetId == id)
-                                      .ToList();
+            var result = new EvaluationViewModel
+            {
+                VocabsWithSkills = new List<VocabWithSkillsViewModel>()
+            };
 
+            var voabs = _context.Vocab.Where(v => v.LearnsetId == id).ToList();
             foreach (var vocab in voabs)
             {
-                vocabWithSkills.Add
-                    (
-                        new VocabWithSkillsViewModel
-                        {
-                            Vocab = vocab,
-                            Skill = _context.Skill.FirstOrDefault(s => s.VocabId == vocab.Id).SkillLevel,
-                            LearnsetId = id
-                        }
-                    );
+                result.VocabsWithSkills.Add(new VocabWithSkillsViewModel
+                {
+                    Vocab = vocab,
+                    Skill = _context.Skill.FirstOrDefault(s => s.VocabId == vocab.Id).SkillLevel,
+                    LearnsetId = id
+                });
             }
 
-            return vocabWithSkills;
+            var skillAmount = (int)result.VocabsWithSkills.Sum(x => x.Skill);
+            var vocabAmount = result.VocabsWithSkills.Count * 4;
+            decimal percentage = 100 / (decimal)vocabAmount * skillAmount;
+            result.Percentage = Convert.ToInt32(percentage);
+
+            if (result.Percentage > 100)
+            {
+                result.Percentage = 100;
+            }
+
+            return result;
         }
 
         private async Task<LearnVocabViewModel> GetRandomSkillAsync(long id, string username)
